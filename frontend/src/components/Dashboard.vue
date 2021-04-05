@@ -3,12 +3,15 @@
     <el-header>
       <v-navbar :activeIndex="'1'"></v-navbar>
     </el-header>
-    <el-aside>
-       <v-side :activeIndex="'1'"></v-side>
-    </el-aside>
-    <el-main>
+    <el-container>
+      <el-aside>
+        <v-side :activeIndex="'1-1'"></v-side>
+      </el-aside>
+      <el-main>
 
-    </el-main>
+
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 

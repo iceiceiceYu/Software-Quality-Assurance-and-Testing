@@ -2,11 +2,6 @@
   <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal"
            @select="handleSelect">
     <el-menu-item index="1">工作台</el-menu-item>
-    <el-submenu index="2">
-      <template slot="title">个人信息修改</template>
-      <el-menu-item index="2-1">基础个人信息</el-menu-item>
-      <el-menu-item index="2-2">修改密码</el-menu-item>
-    </el-submenu>
 
     <el-menu-item style="float: right" @click="dialogVisible=true">
       登出
@@ -49,12 +44,7 @@
             case '1':
               this.$router.replace({path: '/dashboard'})
               break;
-            case '2-1':
-              this.$router.replace({path: '/myInfo'})
-              break;
-            case '2-2':
-              this.$router.replace({path: '/changePass'})
-              break;
+
           }
         },
         logout() {

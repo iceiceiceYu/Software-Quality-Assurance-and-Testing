@@ -52,18 +52,19 @@
       },methods:{
           handleSelect(key, keyPath) {
               switch (key) {
-                case '1':
-                  this.$router.replace({path: '/doctor/checkPatients'})
+                case '1-1':
+                  this.$router.replace({path: '/ManageLoanAccount'})
                   break;
-                case '2':
-                  this.$router.replace({path: '/doctor/checkStaff'})
+                case '1-2':
+                  this.$router.replace({path: '/DayEndProcessing'})
                   break;
-                case '3':
-                  this.$router.replace({path: '/doctor/newReport'})
+                case '2-1':
+                  this.$router.replace({path: '/AccountFlow'})
                   break;
-                case '4':
-                  this.$router.replace({path: '/doctor/news'})
+                case '3-1':
+                  this.$router.replace({path: '/FinancialProducts'})
                   break;
+
               }
           },
 

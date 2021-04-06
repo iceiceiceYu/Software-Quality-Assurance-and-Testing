@@ -1,0 +1,33 @@
+<template>
+  <el-container>
+    <el-header>
+      <v-navbar :activeIndex="'1'"></v-navbar>
+    </el-header>
+    <el-container>
+      <el-aside>
+        <v-side :activeIndex="'1-2'"></v-side>
+      </el-aside>
+      <el-main>
+
+
+      </el-main>
+    </el-container>
+  </el-container>
+</template>
+
+<script>
+  export default {
+    name: "DayEndProcessing",
+    data() {
+      return {
+
+      };
+    },
+    methods: {
+    }
+  }
+</script>
+
+<style scoped>
+
+</style>

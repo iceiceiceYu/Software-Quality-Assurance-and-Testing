@@ -46,8 +46,6 @@ export default new Router({
       path:'/ManageLoanAccount',
       name:'ManageLoanAccount',
       component:ManageLoanAccount
-    },
-
-
+    }
   ]
 })

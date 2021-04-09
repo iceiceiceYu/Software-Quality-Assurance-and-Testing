@@ -11,12 +11,12 @@
         <h1>贷款账户管理</h1>
 
         <el-row>
-          <el-form :inline="true" :modal="loan" ref="loan"  label-width="80px">
+          <el-form :inline="true" :modal="loan" ref="loan" label-width="80px">
             <el-form-item label="身份证号:">
               <el-input type="text" v-model="loan.id"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary">查询账户</el-button>
+              <el-button type="primary" @click="findAccount">查询账户</el-button>
             </el-form-item>
           </el-form>
         </el-row>
@@ -28,19 +28,18 @@
             style="width: 100%">
             <el-table-column
               prop="id"
-              label="ID"
-              width="50">
+              label="账户号"
+            >
             </el-table-column>
             <el-table-column
               prop="name"
               label="姓名">
             </el-table-column>
-            <el-table-column
-              prop="gender"
-              label="性别">
+
+
+            <el-table-column label="操作" fixed="right">
               <template slot-scope="scope">
-                <span v-if="scope.row.gender==='male'">男</span>
-                <span v-else-if="scope.row.gender==='female'">女</span>
+                <el-button size="mini" type="primary" @click="findBill(scope.row)">查找账单</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -68,17 +67,16 @@
                 <span v-else-if="scope.row.due===false">未逾期</span>
               </template>
             </el-table-column>
-            <el-table-column  label="操作" fixed="right">
+            <el-table-column label="操作" fixed="right">
               <template slot-scope="scope">
-                  <el-button size="mini" type="primary" @click="partialReturn(scope.row)">部分归还</el-button>
-                  <el-button size="mini" @click="totalReturn(scope.row)">全额归还</el-button>
+                <el-button size="mini" type="primary" @click="partialReturn(scope.row)">部分归还</el-button>
+                <el-button size="mini" @click="totalReturn(scope.row)">全额归还</el-button>
               </template>
             </el-table-column>
 
 
           </el-table>
         </el-row>
-
 
 
       </el-main>
@@ -91,31 +89,72 @@
     name: "ManageLoanAccount",
     data() {
       return {
-        loan:{
-          id:'',
+        loan: {
+          id: '',
         },
-        Account:[{id:1,name:'wfaarvza',gender:'male'}],
-        Bill:[{id:123,name:'hahah',due:true}],
+        Account: [{id: 111111111111, name: 'wfaarvza'}],
+        Bill: [{id: 123, name: 'hahah', due: true}],
+        selectedAccount: {},
         selectedBill: {},
-
       };
     },
     methods: {
+      findAccount() {
+        this.$axios.post('/findAccount',
+          this.loan.id, //身份证号
+        ).then(resp => {
+          if (resp.data != null) {
+            this.Account = resp.data
+          } else {
+            this.$notify({
+              title: '没有找到对应账户',
+              type: 'warning'
+            });
+          }
+        }).catch(error => {
+          console.log(error);
+          alert('网络连接失败')
+        })
+      },
+      findBill(row) {
+        this.selectedAccount = row
+        this.$axios.post('/findBill',
+          this.selectedAccount.id, //账户号
+        ).then(resp => {
+          this.Bill = resp.data
+        }).catch(error => {
+          console.log(error);
+          alert('网络连接失败')
+        })
+      },
+
+
       totalReturn(row) {
         this.selectedBill = row
-        this.$axios.post('/全额归还的接口', {      //TODO
-          BillId: this.selectedBill.id,
-        }).then(resp => {
-          this.$notify({
-            title: '归还成功！',
-            type: 'success'
-          });
+        this.$axios.post('/totalReturn',
+          this.selectedBill.id,//账单号
+        ).then(resp => {
+          if (resp.data === 'success') {
+            this.$notify({
+              title: '归还成功！',
+              type: 'success'
+            });
+          } else {
+            this.$notify({
+              title: '归还失败！',
+              type: 'warning'
+            });
+          }
+        }).catch(error => {
+          console.log(error);
+          alert('网络连接失败')
         })
-          .catch(error => {
-            console.log(error);
-            alert('网络连接失败')
-          })
       },
+
+      partialReturn(row) {
+        //TODO
+
+      }
     }
   }
 </script>

@@ -5,7 +5,7 @@
     </el-header>
     <el-container>
       <el-aside>
-        <v-side :activeIndex="'1-1'"></v-side>
+        <v-side></v-side>
       </el-aside>
       <el-main>
 

@@ -8,6 +8,8 @@
         <v-side :activeIndex="'1-2'"></v-side>
       </el-aside>
       <el-main>
+        <h1>日终处理</h1>
+        <el-button>开始日终处理</el-button>
 
 
       </el-main>

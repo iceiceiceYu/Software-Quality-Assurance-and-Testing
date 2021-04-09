@@ -6,7 +6,7 @@
   @select="handleSelect">
     <el-submenu index="1">
       <template #title>
-        <i class="el-icon-location"></i>
+        <i class="el-icon-s-data"></i>
         <span>贷款业务</span>
       </template>
       <el-menu-item-group>
@@ -16,7 +16,7 @@
     </el-submenu>
     <el-submenu index="2">
       <template #title>
-        <i class="el-icon-location"></i>
+        <i class="el-icon-s-order"></i>
         <span>公共业务</span>
       </template>
       <el-menu-item-group>
@@ -25,7 +25,7 @@
     </el-submenu>
     <el-submenu index="3">
       <template #title>
-        <i class="el-icon-location"></i>
+        <i class="el-icon-s-finance"></i>
         <span>存款业务</span>
       </template>
       <el-menu-item-group>
@@ -43,7 +43,7 @@
       props:{
           activeIndex:{
             type: String,
-          default: '1-1'
+          default: ''
         }
       },data(){
           return{

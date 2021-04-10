@@ -29,7 +29,7 @@ public class Loan {
     private Boolean isPaidOff;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private List<LoanPay> loanPays = new ArrayList<>();
+    private List<LoanPay> loanPays = new ArrayList<LoanPay>();
 
     public Loan() {
     }

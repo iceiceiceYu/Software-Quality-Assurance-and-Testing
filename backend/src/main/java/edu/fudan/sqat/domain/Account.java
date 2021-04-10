@@ -13,8 +13,8 @@ public class Account {
 
     @Column(unique = true)
     private String IDCode;
-
     private Double total;
+
 
     public Account() {
     }

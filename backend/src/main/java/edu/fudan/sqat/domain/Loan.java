@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author zyl
@@ -15,51 +17,52 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    private Client owner;
+    private String IDCode;
 
     private Double amount;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date start;
+    private Integer stageCount;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date end;
+    private Integer interest;
 
-    private Double fine;
+    private Boolean isPaidOff;
 
-    private Boolean isAlive;// alive or not
-    // 如果客户未能在归还期限前还清本期还款金额，未归还金额计入下一期需归还金额
-    //即上一期的贷款记录关闭(即 false)并从客户的账户中删除，新一期的贷款记录添加到客户的账户中
-
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    private List<LoanPay> loanPays = new ArrayList<LoanPay>();
 
     public Loan() {
     }
 
-    public Loan(Client owner, Double amount, Date start, Date end, Boolean isAlive) {
-        this.owner = owner;
+    public Loan(String IDCode, Double amount, Integer stageCount, Integer interest, Boolean isPaidOff) {
+        this.IDCode = IDCode;
         this.amount = amount;
-        this.start = start;
-        this.end = end;
-        this.isAlive = isAlive;
+        this.stageCount = stageCount;
+        this.interest = interest;
+        this.isPaidOff = isPaidOff;
     }
 
     public Long getId() {
         return id;
     }
 
+    public Integer getInterest() {
+        return interest;
+    }
+
+    public void setInterest(Integer interest) {
+        this.interest = interest;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
 
-    public Client getOwner() {
-        return owner;
+    public String getIDCode() {
+        return IDCode;
     }
 
-    public void setOwner(Client owner) {
-        this.owner = owner;
+    public void setIDCode(String IDCode) {
+        this.IDCode = IDCode;
     }
 
     public Double getAmount() {
@@ -70,35 +73,27 @@ public class Loan {
         this.amount = amount;
     }
 
-    public Date getStart() {
-        return start;
+    public Integer getStageCount() {
+        return stageCount;
     }
 
-    public void setStart(Date start) {
-        this.start = start;
+    public void setStageCount(Integer stageCount) {
+        this.stageCount = stageCount;
     }
 
-    public Date getEnd() {
-        return end;
+    public Boolean getPaidOff() {
+        return isPaidOff;
     }
 
-    public void setEnd(Date end) {
-        this.end = end;
+    public void setPaidOff(Boolean paidOff) {
+        isPaidOff = paidOff;
     }
 
-    public Double getFine() {
-        return fine;
+    public List<LoanPay> getLoanPays() {
+        return loanPays;
     }
 
-    public void setFine(Double fine) {
-        this.fine = fine;
-    }
-
-    public Boolean getAlive() {
-        return isAlive;
-    }
-
-    public void setAlive(Boolean alive) {
-        isAlive = alive;
+    public void setLoanPays(List<LoanPay> loanPays) {
+        this.loanPays = loanPays;
     }
 }

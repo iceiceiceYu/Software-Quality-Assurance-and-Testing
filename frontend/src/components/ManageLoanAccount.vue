@@ -153,7 +153,6 @@
 
       partialReturn(row) {
         //TODO
-
       }
     }
   }

@@ -23,18 +23,50 @@
         <el-divider></el-divider>
         <el-row>
           <el-col :offset="2" :span="10">
-            <p>您的信用等级为：1级，以下是您可以购买的理财产品：</p>
+            <p>您的信用等级为：{{this.creditLevel}}级，以下是您可以购买的理财产品：</p>
           </el-col>
           <el-col :span="6">
           <el-select v-model="value" placeholder="请选择">
             <el-option
               v-for="item in options"
               :key="item.value"
+              :disabled="item.disable"
               :label="item.label"
               :value="item.value">
             </el-option>
           </el-select>
           </el-col>
+          <el-col>
+            {{this.value}}
+          </el-col>
+
+        </el-row>
+        <el-row>
+          <el-col v-if="this.value==='stock'">
+            <el-input v-model="this.stockAmount">
+              股数
+            </el-input>
+
+          </el-col>
+          <el-col v-if="this.value==='fund' || this.value==='deposit'">
+            <el-date-picker
+              v-model="purchaseDate"
+              type="date"
+              placeholder="选择日期"
+              :picker-options="pickerOptions"
+              format="yyyy 年 MM 月 dd 日"
+              value-format="yyyy-MM-dd"
+            >
+            </el-date-picker>
+
+          </el-col>
+          <el-col>
+            {{this.purchaseDate}}
+          </el-col>
+          <el-button
+            @click="purchase"
+
+          >购买</el-button>
         </el-row>
 
 
@@ -48,22 +80,62 @@
     name: "FinancialProducts",
     data() {
       return {
+        accountId: '',
+        pickerOptions: {
+          disabledDate (time) {
+            return time.getTime() < Date.now();
+          }
+        },
         account: {},
         options: [{
           value: 'stock',
-          label: '股票'
+          label: '股票',
+          disable: this.creditLevel===2 || this.creditLevel===3
         }, {
           value: 'fund',
-          label: '基金'
+          label: '基金',
+          disable: this.creditLevel===3
         }, {
           value: 'deposit',
-          label: '定期'
+          label: '定期',
+          disable: false
         }],
-        value: ''
+        value: '',
+        creditLevel: 1,
+        purchaseDate: '',
+        stockAmount: ''
 
       };
     },
-    methods: {}
+    methods: {
+        purchase() {
+
+          this.$axios.post('/purchase',
+            {
+              accountId: this.accountId,
+              type: this.type,
+              stockAmount: this.stockAmount,
+              date: this.date
+            },
+          ).then(resp => {
+            if (resp.data === 'success') {
+              this.$notify({
+                title: '购买成功！',
+                type: 'success'
+              });
+            } else {
+              this.$notify({
+                title: '购买失败！',
+                type: 'warning'
+              });
+            }
+          }).catch(error => {
+            console.log(error);
+            alert('网络连接失败')
+          })
+        }
+
+    }
   }
 </script>
 

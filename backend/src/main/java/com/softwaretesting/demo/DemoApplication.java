@@ -25,8 +25,8 @@ public class DemoApplication {
             @Override
             public void run(String... args) throws Exception {
                 // Create authorities if not exist.
-                //Authority adminAuthority = getOrCreateAuthority("Doctor", authorityRepository);
-//                getOrCreateAuthority("Head_nurse", authorityRepository);
+                Authority adminAuthority = getOrCreateAuthority("BankTeller", authorityRepository);
+                getOrCreateAuthority("Client", authorityRepository);
 //                getOrCreateAuthority("Ward_nurse", authorityRepository);
 //                getOrCreateAuthority("Emergency_nurse", authorityRepository);
 

@@ -8,9 +8,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * @author zyl
  */
-
-// 似乎跨域问题也可以用@CorsOrigin注解解决？
-
 @Configuration
 public class CorsConfig {
     @Bean

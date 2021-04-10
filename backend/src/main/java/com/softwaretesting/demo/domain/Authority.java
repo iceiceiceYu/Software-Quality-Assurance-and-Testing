@@ -24,7 +24,7 @@ public class Authority implements GrantedAuthority {
 
     @ManyToMany(mappedBy = "authorities")
     @JsonIgnore
-    private Set<User> users;
+    private Set<Client> users;
 
     public Authority() {
     }
@@ -50,11 +50,11 @@ public class Authority implements GrantedAuthority {
         this.authority = authority;
     }
 
-    public Set<User> getUsers() {
+    public Set<Client> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<User> users) {
+    public void setUsers(Set<Client> users) {
         this.users = users;
     }
 }

@@ -1,12 +1,11 @@
 package com.softwaretesting.demo.service;
 
 import com.softwaretesting.demo.domain.Authority;
-import com.softwaretesting.demo.domain.User;
+import com.softwaretesting.demo.domain.Client;
 import com.softwaretesting.demo.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -26,11 +25,11 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userRepository.findByName(username);
+        Client user = userRepository.findByName(username);
         if (null == user) {
             throw new UsernameNotFoundException("User: '" + username + "' not found.");
         }
-        return new User(user.getUsername(), user.getPassword(), user.getAge(), user.getGender(),
+        return new Client(user.getUsername(), user.getPassword(), user.getAge(), user.getGender(),
                 (Set<Authority>) user.getAuthorities());
     }
 }

@@ -16,7 +16,7 @@ public class DebtRecord {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    private User owner;
+    private Client owner;
 
     private Double debt;
 
@@ -38,7 +38,7 @@ public class DebtRecord {
     public DebtRecord() {
     }
 
-    public DebtRecord(User owner,Date end,Date start,Double debt){
+    public DebtRecord(Client owner,Date end,Date start,Double debt){
         this.owner=owner;
         this.start=start;
         this.end=end;
@@ -46,11 +46,11 @@ public class DebtRecord {
         this.isAlive=true;
     }
 
-    public User getOwner() {
+    public Client getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(Client owner) {
         this.owner = owner;
     }
 

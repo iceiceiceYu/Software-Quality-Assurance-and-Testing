@@ -12,7 +12,7 @@ import java.util.Set;
  * @author zyl
  */
 @Entity
-public class User implements UserDetails {
+public class Client implements UserDetails {
 
     private static final long serialVersionUID = 4942181896974654934L;
 
@@ -21,24 +21,27 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(unique =true)
+
     private String name;
 
     private String gender;
     private String pwd;
     private Integer age;
+    @Column(unique =true)
+    private String idCard;
 
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<Authority> authorities = new HashSet<>();
 
-    public User() {}
+    public Client() {}
 
-    public User(String name, String pwd, Integer age, String gender, Set<Authority> authorities) {
+    public Client(String name, String pwd, Integer age, String gender, String idCard, Set<Authority> authorities) {
         this.name=name;
         this.pwd=pwd;
         this.age=age;
         this.gender=gender;
+        this.idCard = idCard;
         this.authorities = authorities;
     }
 
@@ -47,11 +50,11 @@ public class User implements UserDetails {
     //重写equals方法, 最佳实践就是如下这种判断顺序:
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof User))
+        if (!(obj instanceof Client))
             return false;
         if (obj == this)
             return true;
-        return this.getId().equals(((User) obj).getId());
+        return this.getId().equals(((Client) obj).getId());
     }
 
     public int hashCode(){
@@ -140,5 +143,10 @@ public class User implements UserDetails {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public void setIdCard(String idCard) {
+        this.idCard = idCard;
+    }
+    public String getIdCard() {return idCard;}
 }
 

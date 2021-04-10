@@ -14,7 +14,7 @@ public class Account {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    private User owner;
+    private Client owner;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch=FetchType.LAZY)
     private Set<DebtRecord> debtRecords = new HashSet<>();
@@ -22,15 +22,15 @@ public class Account {
     public Account() {
     }
 
-    public Account(User owner){
+    public Account(Client owner){
         this.owner=owner;
     }
 
-    public User getOwner() {
+    public Client getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(Client owner) {
         this.owner = owner;
     }
 

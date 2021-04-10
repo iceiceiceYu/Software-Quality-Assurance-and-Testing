@@ -18,7 +18,7 @@ public class Account {
     private Client owner;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private List<Loan> loans = new ArrayList<>();
+    private List<Loan> loans = new ArrayList<Loan>();
 
     public Account() {
     }

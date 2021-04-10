@@ -17,6 +17,8 @@
             <el-table-column
               prop="id"
               label="流水号"
+              :filters="[{text: '隔离区', value: ''}, {text: '轻症', value: 0}, {text: '重症', value: 1}, {text: '危重症', value: 2}]"
+              :filter-method="filterTag"
              sortable>
             </el-table-column>
             <el-table-column
@@ -52,6 +54,33 @@
       };
     },
     methods: {
+
+      getAllFlow() {
+          this.$axios.post('/getAllFlow')
+                  .then(resp => {
+            if (resp.data === 'Success') {
+              this.$notify({
+                title: '归还成功！',
+                type: 'success'
+              });
+              this.Flow = resp.data
+            } else {
+              this.$notify({
+                title: '归还失败！',
+                type: 'warning'
+              });
+            }
+          }).catch(error => {
+            console.log(error);
+            alert('网络连接失败')
+          })
+
+
+      },
+      filterTag (value, row) {
+        return row.conditionRate === value
+      },
+
     }
   }
 </script>

@@ -43,8 +43,10 @@
         </el-row>
         <el-row>
           <el-col v-if="this.value==='stock'">
-            <el-input v-model="this.stockAmount">
-              股数
+            <el-input
+                    v-model="this.stockAmount"
+                    placeholder="请输入您要购买的股数"
+            >
             </el-input>
 
           </el-col>
@@ -77,37 +79,43 @@
 
 <script>
   export default {
-    name: "FinancialProducts",
-    data() {
-      return {
-        accountId: '',
-        pickerOptions: {
-          disabledDate (time) {
-            return time.getTime() < Date.now();
-          }
-        },
-        account: {},
-        options: [{
-          value: 'stock',
-          label: '股票',
-          disable: this.creditLevel===2 || this.creditLevel===3
-        }, {
-          value: 'fund',
-          label: '基金',
-          disable: this.creditLevel===3
-        }, {
-          value: 'deposit',
-          label: '定期',
-          disable: false
-        }],
-        value: '',
-        creditLevel: 1,
-        purchaseDate: '',
-        stockAmount: ''
+      name: "FinancialProducts",
+      data() {
+          return {
+            accountId: '',
+            pickerOptions: {
+              disabledDate (time) {
+                return time.getTime() < Date.now();
+              }
+            },
+            account: {},
+            options: [{
+              value: 'stock',
+              label: '股票',
+              disable: this.creditLevel===2 || this.creditLevel===3
+            }, {
+              value: 'fund',
+              label: '基金',
+              disable: this.creditLevel===3
+            }, {
+              value: 'deposit',
+              label: '定期',
+              disable: false
+            }],
+            value: '',
+            creditLevel: 1,
+            purchaseDate: '',
+            stockAmount: ''
 
-      };
-    },
+          };
+      },
     methods: {
+
+        getMyFinancialProducts() {
+
+
+        },
+
         purchase() {
 
           this.$axios.post('/purchase',

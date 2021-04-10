@@ -114,58 +114,58 @@
                 selectedLoan: {},
             };
         },
-    methods: {
-      findAccount() {
-        this.$axios.post('/findAccount',
-          this.loan.id, //身份证号
-        ).then(resp => {
-          if (resp.data != null) {
-            this.Account = resp.data
-          } else {
-            this.$notify({
-              title: '没有找到对应账户',
-              type: 'warning'
-            });
-          }
-        }).catch(error => {
-          console.log(error);
-          alert('网络连接失败')
-        })
-      },
-      findBill(row) {
-        this.selectedAccount = row
-        this.$axios.post('/findBill',
-          this.selectedAccount.id, //账户号
-        ).then(resp => {
-          this.Bill = resp.data
-        }).catch(error => {
-          console.log(error);
-          alert('网络连接失败')
-        })
-      },
+        methods: {
+          findAccount() {
+            this.$axios.post('/findAccount',
+              this.loan.id, //身份证号
+            ).then(resp => {
+              if (resp.data != null) {
+                this.Account = resp.data
+              } else {
+                this.$notify({
+                  title: '没有找到对应账户',
+                  type: 'warning'
+                });
+              }
+            }).catch(error => {
+              console.log(error);
+              alert('网络连接失败')
+            })
+          },
+          findBill(row) {
+            this.selectedAccount = row
+            this.$axios.post('/findBill',
+              this.selectedAccount.id, //账户号
+            ).then(resp => {
+              this.Bill = resp.data
+            }).catch(error => {
+              console.log(error);
+              alert('网络连接失败')
+            })
+          },
 
 
-      totalReturn(row) {
-        this.selectedBill = row
-        this.$axios.post('/totalReturn',
-          this.selectedBill.id,//账单号
-        ).then(resp => {
-          if (resp.data === 'success') {
-            this.$notify({
-              title: '归还成功！',
-              type: 'success'
-            });
-          } else {
-            this.$notify({
-              title: '归还失败！',
-              type: 'warning'
-            });
-          }
-        }).catch(error => {
-          console.log(error);
-          alert('网络连接失败')
-        })
-      },
+          totalReturn(row) {
+            this.selectedBill = row
+            this.$axios.post('/totalReturn',
+              this.selectedBill.id,//账单号
+            ).then(resp => {
+              if (resp.data === 'success') {
+                this.$notify({
+                  title: '归还成功！',
+                  type: 'success'
+                });
+              } else {
+                this.$notify({
+                  title: '归还失败！',
+                  type: 'warning'
+                });
+              }
+            }).catch(error => {
+              console.log(error);
+              alert('网络连接失败')
+            })
+          },
 
 
         partialReturn(row) {
@@ -198,8 +198,6 @@
                 })
             })
         }
-
-
         }
     }
 </script>

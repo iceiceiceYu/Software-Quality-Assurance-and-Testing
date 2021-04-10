@@ -1,9 +1,9 @@
 package edu.fudan.sqat.domain;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 /**
  * @author zyl
@@ -14,17 +14,21 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    private Client owner;
+    private String IDCode;
 
-    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private List<Loan> loans = new ArrayList<>();
+    private Double total;
 
     public Account() {
     }
 
-    public Account(Client owner) {
-        this.owner = owner;
+    public Account(String IDCode) {
+        this.IDCode = IDCode;
+        this.total = 0.0;
+    }
+
+    public Account(String IDCode, Double total) {
+        this.IDCode = IDCode;
+        this.total = total;
     }
 
     public Long getId() {
@@ -35,19 +39,19 @@ public class Account {
         this.id = id;
     }
 
-    public Client getOwner() {
-        return owner;
+    public String getIDCode() {
+        return IDCode;
     }
 
-    public void setOwner(Client owner) {
-        this.owner = owner;
+    public void setIDCode(String IDCode) {
+        this.IDCode = IDCode;
     }
 
-    public List<Loan> getLoans() {
-        return loans;
+    public Double getTotal() {
+        return total;
     }
 
-    public void setLoans(List<Loan> loans) {
-        this.loans = loans;
+    public void setTotal(Double total) {
+        this.total = total;
     }
 }

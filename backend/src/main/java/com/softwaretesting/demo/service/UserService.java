@@ -1,22 +1,16 @@
 package com.softwaretesting.demo.service;
 
-import com.softwaretesting.demo.domain.*;
 //import com.softwaretesting.demo.exception.*;
+import com.softwaretesting.demo.domain.Client;
 import com.softwaretesting.demo.repository.*;
+import com.softwaretesting.demo.security.jwt.JwtTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 @Service
 public class UserService {
@@ -24,6 +18,7 @@ public class UserService {
     private AuthorityRepository authorityRepository;
     private AuthenticationManager authenticationManager;
     private JwtUserDetailsService jwtUserDetailsService;
+    private JwtTokenUtil jwtTokenUtil;
 
 
     private PasswordEncoder passwordEncoder;
@@ -43,8 +38,18 @@ public class UserService {
 
     }
 
-    public void login(String username, String password,String authority,String treatmentArea) {
-
+    public String login(String username, String password) throws UsernameNotFoundException {
+        Client user = userRepository.findByName(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User: '" + username + "' not found.");
+        } else {
+            String correctPassword = user.getPassword();
+            if (password.equals(correctPassword)) {
+                return jwtTokenUtil.generateToken(user);
+            } else {
+                return "密码错误！";
+            }
+        }
     }
 
 

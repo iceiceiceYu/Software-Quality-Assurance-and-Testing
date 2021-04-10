@@ -1,6 +1,7 @@
 package com.softwaretesting.demo.security.jwt;
 
 
+import com.softwaretesting.demo.domain.Client;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -31,7 +32,7 @@ public class JwtTokenUtil implements Serializable {
         this.jwtConfigProperties = jwtConfigProperties;
     }
 
-    public String generateToken(User user) {
+    public String generateToken(Client user) {
         Map<String, Object> claims = new HashMap<>();
         return Jwts.builder().setClaims(claims)
                 .setSubject(user.getUsername())

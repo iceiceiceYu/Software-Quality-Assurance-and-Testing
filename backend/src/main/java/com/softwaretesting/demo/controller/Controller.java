@@ -1,6 +1,7 @@
 package com.softwaretesting.demo.controller;
 
 //import com.softwaretesting.demo.controller.request.*;
+import com.softwaretesting.demo.controller.request.LoginRequest;
 import com.softwaretesting.demo.domain.*;
 import com.softwaretesting.demo.service.JwtUserDetailsService;
 import com.softwaretesting.demo.service.UserService;
@@ -33,18 +34,16 @@ public class Controller {
     }
 
 
-//    @PostMapping("/login")
-//    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
-//
-//        Map<String, Object> response = new HashMap<>();
-//        Long id = userService.login(request.getUsername(), request.getPassword(),request.getAuthority(),request.getTreatmentArea());
-//        final UserDetails targetUser = jwtUserDetailsService.loadUserByUsername(request.getUsername());
-//        Long authorityId=userService.findAuthorityId(request.getUsername());
-//        response.put("Id", id);
-//        response.put("authorityId",authorityId);
-//        response.put("userDetails", targetUser);
-//        return ResponseEntity.ok(response);
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
+        String msg = userService.login(request.getUsername(), request.getPassword());
+        final UserDetails targetUser = jwtUserDetailsService.loadUserByUsername(request.getUsername());
+        response.put("msg", msg);
+        response.put("userDetails", targetUser);
+        return ResponseEntity.ok(response);
+    }
 
 
 

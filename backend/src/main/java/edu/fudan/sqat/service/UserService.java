@@ -15,7 +15,7 @@ public class UserService {
     }
 
     public User login(String username, String password) throws Exception {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findUserByUsername(username);
         if (user == null) {
             throw new Exception("username " + username + " not found");
         }

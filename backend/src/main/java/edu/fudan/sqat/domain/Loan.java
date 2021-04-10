@@ -18,18 +18,14 @@ public class Loan {
     private Long id;
 
     @Column(unique = true)
-    private String IDCode;
-
+    private String IDCode; // TODO
     private Double amount;
-
     private Integer stageCount;
-
     private Integer interest;
-
     private Boolean isPaidOff;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private List<LoanPay> loanPays = new ArrayList<LoanPay>();
+    private List<LoanPay> loanPays = new ArrayList<>();
 
     public Loan() {
     }
@@ -44,14 +40,6 @@ public class Loan {
 
     public Long getId() {
         return id;
-    }
-
-    public Integer getInterest() {
-        return interest;
-    }
-
-    public void setInterest(Integer interest) {
-        this.interest = interest;
     }
 
     public void setId(Long id) {
@@ -80,6 +68,14 @@ public class Loan {
 
     public void setStageCount(Integer stageCount) {
         this.stageCount = stageCount;
+    }
+
+    public Integer getInterest() {
+        return interest;
+    }
+
+    public void setInterest(Integer interest) {
+        this.interest = interest;
     }
 
     public Boolean getPaidOff() {

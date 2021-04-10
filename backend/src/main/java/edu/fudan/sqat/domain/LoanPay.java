@@ -18,13 +18,9 @@ public class LoanPay {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private Long loanId;
-
     private Double amount;
-
     private Double fine;
-
     private Integer stage;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -49,14 +45,6 @@ public class LoanPay {
         this.start = start;
         this.end = end;
         this.moneyPaid = moneyPaid;
-    }
-
-    public Integer getStage() {
-        return stage;
-    }
-
-    public void setStage(Integer stage) {
-        this.stage = stage;
     }
 
     public Long getId() {
@@ -91,6 +79,14 @@ public class LoanPay {
         this.fine = fine;
     }
 
+    public Integer getStage() {
+        return stage;
+    }
+
+    public void setStage(Integer stage) {
+        this.stage = stage;
+    }
+
     public Date getStart() {
         return start;
     }
@@ -114,5 +110,4 @@ public class LoanPay {
     public void setMoneyPaid(Double moneyPaid) {
         this.moneyPaid = moneyPaid;
     }
-
 }

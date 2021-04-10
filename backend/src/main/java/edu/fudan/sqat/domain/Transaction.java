@@ -14,25 +14,23 @@ public class Transaction {
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private Account account;
-
     private Double balance;
     private Double currentTotal;
+    private String source; // "Financial Management Income/Outlay"; "Loan Pay Outlay"
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date time;
 
-    private String source; // "Financial Management Income/Outlay"; "Loan Pay Outlay"
-
     public Transaction() {
     }
 
-    public Transaction(Account account, Double balance, Double currentTotal, Date time, String source) {
+    public Transaction(Account account, Double balance, Double currentTotal, String source, Date time) {
         this.account = account;
         this.balance = balance;
         this.currentTotal = currentTotal;
-        this.time = time;
         this.source = source;
+        this.time = time;
     }
 
     public Long getId() {
@@ -67,19 +65,19 @@ public class Transaction {
         this.currentTotal = currentTotal;
     }
 
-    public Date getTime() {
-        return time;
-    }
-
-    public void setTime(Date time) {
-        this.time = time;
-    }
-
     public String getSource() {
         return source;
     }
 
     public void setSource(String source) {
         this.source = source;
+    }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
     }
 }

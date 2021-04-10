@@ -24,5 +24,4 @@ public class UserController {
     public ResponseEntity<User> login(@RequestBody LoginRequest loginRequest) throws Exception {
         return ResponseEntity.ok(userService.login(loginRequest.getUsername(), loginRequest.getPassword()));
     }
-
 }

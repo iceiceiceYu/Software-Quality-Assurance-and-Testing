@@ -5,6 +5,9 @@ public class RepaymentRequest {
     private Double money;
     private Integer type;
 
+    public RepaymentRequest() {
+    }
+
     public RepaymentRequest(Long loanId, Double money, Integer type) {
         this.loanId = loanId;
         this.money = money;

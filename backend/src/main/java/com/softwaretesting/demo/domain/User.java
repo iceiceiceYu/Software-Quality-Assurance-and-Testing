@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 public class User implements UserDetails {
 
-    private static final long serialVersionUID = -2630206178053727536L;
+    private static final long serialVersionUID = 4942181896974654934L;
 
 
     @Id

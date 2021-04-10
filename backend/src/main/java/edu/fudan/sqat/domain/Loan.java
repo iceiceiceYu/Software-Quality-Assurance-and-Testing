@@ -17,6 +17,7 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(unique = true)
     private String IDCode;
 
     private Double amount;

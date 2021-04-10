@@ -16,6 +16,7 @@ public class Transaction {
     private Account account;
 
     private Double balance;
+    private Double currentTotal;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -26,9 +27,10 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(Account account, Double balance, Date time, String source) {
+    public Transaction(Account account, Double balance, Double currentTotal, Date time, String source) {
         this.account = account;
         this.balance = balance;
+        this.currentTotal = currentTotal;
         this.time = time;
         this.source = source;
     }
@@ -55,6 +57,14 @@ public class Transaction {
 
     public void setBalance(Double balance) {
         this.balance = balance;
+    }
+
+    public Double getCurrentTotal() {
+        return currentTotal;
+    }
+
+    public void setCurrentTotal(Double currentTotal) {
+        this.currentTotal = currentTotal;
     }
 
     public Date getTime() {

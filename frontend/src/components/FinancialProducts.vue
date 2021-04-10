@@ -118,17 +118,21 @@
               date: this.date
             },
           ).then(resp => {
-            if (resp.data === 'success') {
-              this.$notify({
-                title: '购买成功！',
-                type: 'success'
-              });
-            } else {
-              this.$notify({
-                title: '购买失败！',
-                type: 'warning'
-              });
-            }
+            // if (resp.data === 'success') {
+            //   this.$notify({
+            //     title: '购买成功！',
+            //     type: 'success'
+            //   });
+            // } else {
+            //   this.$notify({
+            //     title: '购买失败！',
+            //     type: 'warning'
+            //   });
+            // }
+            this.$notify({
+              title: resp.data,
+              type: 'warning'
+            });
           }).catch(error => {
             console.log(error);
             alert('网络连接失败')

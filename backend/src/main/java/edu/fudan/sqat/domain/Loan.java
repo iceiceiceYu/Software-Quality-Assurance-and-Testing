@@ -1,4 +1,4 @@
-package com.softwaretesting.demo.domain;
+package edu.fudan.sqat.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -6,11 +6,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * @author zyl
+ */
 @Entity
-public class DebtRecord {
-
-    private static final long serialVersionUID = 8618455237453435026L;
-
+public class Loan {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -18,7 +18,7 @@ public class DebtRecord {
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Client owner;
 
-    private Double debt;
+    private Double amount;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -35,23 +35,15 @@ public class DebtRecord {
     //即上一期的贷款记录关闭(即 false)并从客户的账户中删除，新一期的贷款记录添加到客户的账户中
 
 
-    public DebtRecord() {
+    public Loan() {
     }
 
-    public DebtRecord(Client owner,Date end,Date start,Double debt){
-        this.owner=owner;
-        this.start=start;
-        this.end=end;
-        this.debt=debt;
-        this.isAlive=true;
-    }
-
-    public Client getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Client owner) {
+    public Loan(Client owner, Double amount, Date start, Date end, Boolean isAlive) {
         this.owner = owner;
+        this.amount = amount;
+        this.start = start;
+        this.end = end;
+        this.isAlive = isAlive;
     }
 
     public Long getId() {
@@ -62,12 +54,20 @@ public class DebtRecord {
         this.id = id;
     }
 
-    public Double getDebt() {
-        return debt;
+    public Client getOwner() {
+        return owner;
     }
 
-    public void setDebt(Double debt) {
-        this.debt = debt;
+    public void setOwner(Client owner) {
+        this.owner = owner;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
     public Date getStart() {
@@ -93,7 +93,6 @@ public class DebtRecord {
     public void setFine(Double fine) {
         this.fine = fine;
     }
-
 
     public Boolean getAlive() {
         return isAlive;

@@ -1,4 +1,4 @@
-package com.softwaretesting.demo.config;
+package edu.fudan.sqat.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -6,8 +6,11 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
-     * @author zyl
+ * @author zyl
  */
+
+// 似乎跨域问题也可以用@CorsOrigin注解解决？
+
 @Configuration
 public class CorsConfig {
     @Bean

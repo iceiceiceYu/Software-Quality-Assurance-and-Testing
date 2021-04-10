@@ -1,10 +1,10 @@
-package com.softwaretesting.demo;
+package edu.fudan.sqat;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DemoApplicationTests {
+class SqatApplicationTests {
 
     @Test
     void contextLoads() {

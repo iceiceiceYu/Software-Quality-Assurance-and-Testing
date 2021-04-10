@@ -1,4 +1,4 @@
-package com.softwaretesting.demo.controller.request;
+package edu.fudan.sqat.controller.request;
 
 public class LoginRequest {
     private String username;

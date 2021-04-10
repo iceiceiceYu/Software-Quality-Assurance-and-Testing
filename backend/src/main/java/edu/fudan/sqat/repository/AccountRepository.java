@@ -1,7 +1,6 @@
-package com.softwaretesting.demo.repository;
+package edu.fudan.sqat.repository;
 
-
-import com.softwaretesting.demo.domain.Account;
+import edu.fudan.sqat.domain.Account;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +9,4 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface AccountRepository extends CrudRepository<Account, Long> {
-
 }

@@ -1,4 +1,4 @@
-package com.softwaretesting.demo.config;
+package edu.fudan.sqat.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
-     * @author zyl
+ * @author zyl
  */
 @Configuration
 public class CorsConfig {

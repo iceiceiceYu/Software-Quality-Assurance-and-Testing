@@ -24,12 +24,12 @@ public class RepayController {
 
     // TODO: this three methods
     @PostMapping("/repay/loanInfo")
-    public ResponseEntity<List<Loan>> loanInfo(@RequestBody Long accountId) {
+    public ResponseEntity<List<Loan>> loanInfo(@RequestBody Long accountId) throws Exception {
         return ResponseEntity.ok(repayService.loanInfo(accountId));
     }
 
     @PostMapping("/repay/repayment")
-    public ResponseEntity<String> repayment(@RequestBody RepaymentRequest repaymentRequest) {
+    public ResponseEntity<String> repayment(@RequestBody RepaymentRequest repaymentRequest)throws Exception  {
         return ResponseEntity.ok(repayService.repayment(repaymentRequest));
     }
 

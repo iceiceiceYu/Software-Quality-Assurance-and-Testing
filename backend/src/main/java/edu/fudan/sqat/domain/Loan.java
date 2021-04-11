@@ -18,7 +18,7 @@ public class Loan {
     private Long id;
 
     @Column(unique = true)
-    private String IDCode; // TODO
+    private Long accountId;
     private Double amount;
     private Integer stageCount;
     private Integer interest;
@@ -30,8 +30,8 @@ public class Loan {
     public Loan() {
     }
 
-    public Loan(String IDCode, Double amount, Integer stageCount, Integer interest, Boolean isPaidOff) {
-        this.IDCode = IDCode;
+    public Loan(Long id, Double amount, Integer stageCount, Integer interest, Boolean isPaidOff) {
+        this.accountId = id;
         this.amount = amount;
         this.stageCount = stageCount;
         this.interest = interest;
@@ -46,13 +46,6 @@ public class Loan {
         this.id = id;
     }
 
-    public String getIDCode() {
-        return IDCode;
-    }
-
-    public void setIDCode(String IDCode) {
-        this.IDCode = IDCode;
-    }
 
     public Double getAmount() {
         return amount;
@@ -92,5 +85,13 @@ public class Loan {
 
     public void setLoanPays(List<LoanPay> loanPays) {
         this.loanPays = loanPays;
+    }
+
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 }

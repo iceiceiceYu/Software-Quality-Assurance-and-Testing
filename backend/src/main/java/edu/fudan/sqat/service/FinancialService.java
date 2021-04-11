@@ -79,7 +79,7 @@ public class FinancialService {
             if (total < fine) {
                 return "cannot pay fine";
             } else {
-                total = total - fine;
+                total -= fine;
                 Transaction transaction = new Transaction(account, -fine, total, "Fine Pay Outlay", date);
                 transactionRepository.save(transaction);
                 account.setTotal(total);
@@ -93,7 +93,7 @@ public class FinancialService {
         if (total < price) {
             return "cannot pay financial product";
         } else {
-            total = total - price;
+            total -=  price;
             Transaction transaction = new Transaction(account, -price, total, "Financial Management Outlay", date);
             transactionRepository.save(transaction);
             Purchase purchase = new Purchase(IDCode, name, type, stockAmount, date);

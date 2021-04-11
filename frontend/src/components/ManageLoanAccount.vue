@@ -94,7 +94,19 @@
 
                     </el-table>
                 </el-row>
-
+                <el-divider></el-divider>
+                <el-row>
+                    <el-col :span="6">
+                        <p>当前时间是（测试用,记得删）</p>
+                    </el-col>
+                    <el-col :span="4">
+                    <el-date-picker
+                            v-model="time"
+                            type="datetime"
+                            placeholder="选择日期时间">
+                    </el-date-picker>
+                    </el-col>
+                </el-row>
 
 
             </el-main>
@@ -106,12 +118,12 @@
     export default {
         name: "ManageLoanAccount",
         data() {
-
+            const date = new Date();
             return {
                 messageForm: {
                     id: '',
                 },
-
+                time: date.getTime(),
                 Account: [],
                 Loan: [],
                 selectedAccount: {},
@@ -154,7 +166,7 @@
                 this.$axios.post('/repay/repayment', {
                     loanId: this.selectedLoan.id,
                     type: 1,
-
+                    currentTime:this.time
                 }).then(resp => {
                     if (resp.data === 'Success') {
                         this.$notify({
@@ -185,7 +197,7 @@
                         loanId: this.selectedLoan.id,
                         money: value,
                         type: 0,
-
+                        currentTime:this.time
                     }).then(resp => {
                         if (resp.data === 'Success') {
                             this.$notify({

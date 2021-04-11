@@ -14,15 +14,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User login(String username, String password) throws Exception {
+    public User login(String username, String password) {
         User user = userRepository.findUserByUsername(username);
         if (user == null) {
-            throw new Exception("username " + username + " not found");
+            return null;
         }
 
         String correctPassword = user.getPassword();
         if (!correctPassword.equals(password)) {
-            throw new Exception("wrong password");
+            return null;
         }
 
         return user;

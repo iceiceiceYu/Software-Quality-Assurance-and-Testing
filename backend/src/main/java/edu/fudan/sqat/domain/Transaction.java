@@ -16,7 +16,7 @@ public class Transaction {
     private Account account;
     private Double balance;
     private Double currentTotal;
-    private String source; // "Financial Management Income/Outlay"; "Loan Pay Outlay"
+    private String source; // "Financial Management Income/Outlay"; "Loan Pay Outlay"; "Fine Pay Outlay";
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

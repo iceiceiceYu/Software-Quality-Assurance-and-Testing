@@ -15,14 +15,13 @@ import java.util.List;
 @RestController
 @CrossOrigin
 public class RepayController {
-    private RepayService repayService;
+    private final RepayService repayService;
 
     @Autowired
     public RepayController(RepayService repayService) {
         this.repayService = repayService;
     }
 
-    // TODO: this three methods
     @PostMapping("/repay/loanInfo")
     public ResponseEntity<List<Loan>> loanInfo(@RequestBody Long accountId) throws Exception {
         return ResponseEntity.ok(repayService.loanInfo(accountId));

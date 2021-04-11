@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @CrossOrigin
 public class ClientController {
@@ -22,7 +20,7 @@ public class ClientController {
     }
 
     @PostMapping("/client/accountInfo")
-    public ResponseEntity<Account> accountInfo(@RequestBody String IDCode) throws Exception {
+    public ResponseEntity<Account> accountInfo(@RequestBody String IDCode) {
         return ResponseEntity.ok(clientService.accountInfo(IDCode));
     }
 }

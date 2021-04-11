@@ -31,32 +31,32 @@ public class SqatApplication {
 
             @Override
             public void run(ApplicationArguments args) throws Exception {
-                AccountLoader();
-                ClientLoader();
-                LoanPayLoader();
-                LoanLoader();
-                TransactionLoader();
-                UserLoader();
+                AccountLoader(accountRepository);
+                ClientLoader(clientRepository);
+                LoanPayLoader(loanPayRepository);
+                LoanLoader(loanRepository);
+                TransactionLoader(transactionRepository, accountRepository);
+                UserLoader(userRepository);
             }
 
-            private void AccountLoader() {
+            private void AccountLoader(AccountRepository accountRepository) {
                 Account account = new Account("12345", 100.0);
                 accountRepository.save(account);
             }
 
-            private void ClientLoader() {
+            private void ClientLoader(ClientRepository clientRepository) {
 
             }
 
-            private void LoanPayLoader() {
+            private void LoanPayLoader(LoanPayRepository loanPayRepository) {
 
             }
 
-            private void LoanLoader() {
+            private void LoanLoader(LoanRepository loanRepository) {
 
             }
 
-            private void TransactionLoader() throws ParseException {
+            private void TransactionLoader(TransactionRepository transactionRepository, AccountRepository accountRepository) throws ParseException {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Account account = accountRepository.findAccountByIDCode("12345");
                 Transaction transaction;
@@ -70,7 +70,7 @@ public class SqatApplication {
                 transactionRepository.save(transaction);
             }
 
-            private void UserLoader() {
+            private void UserLoader(UserRepository userRepository) {
                 User user = new User("admin", "password", "admin");
                 userRepository.save(user);
             }

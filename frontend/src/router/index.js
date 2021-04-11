@@ -6,6 +6,7 @@ import AccountFlow from '@/components/AccountFlow'
 import DayEndProcessing from '@/components/DayEndProcessing'
 import FinancialProducts from '@/components/FinancialProducts'
 import ManageLoanAccount from '@/components/ManageLoanAccount'
+import TransferAccounts from '@/components/TransferAccounts'
 
 Vue.use(Router)
 
@@ -46,6 +47,11 @@ export default new Router({
       path:'/ManageLoanAccount',
       name:'ManageLoanAccount',
       component:ManageLoanAccount
+    },
+    {
+      path:'/TransferAccounts',
+      name:'TransferAccounts',
+      component:TransferAccounts
     }
   ]
 })

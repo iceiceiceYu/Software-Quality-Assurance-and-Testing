@@ -35,6 +35,54 @@ public class FinancialService {
         this.transactionRepository = transactionRepository;
     }
 
+    public String increase() {
+        List<Purchase> purchases = (List<Purchase>) purchaseRepository.findAll();
+        for (Purchase purchase : purchases) {
+            String type = purchase.getType();
+            Double capital = purchase.getCapital();
+            Double profit = purchase.getProfit();
+            double gain = 0.0, modify;
+            String source = "Financial Management Income";
+
+            switch (type) {
+                case "stock":
+                    modify = ((int) (Math.random() * 21) - 10) / 10.0;
+                    gain = (capital + profit) * modify;
+                    profit += gain;
+                    if (modify < 0) {
+                        source = "Financial Management Outlay";
+                    }
+                    break;
+                case "fund":
+                    modify = 0.1;
+                    gain = (capital + profit) * modify;
+                    profit += gain;
+                    break;
+                case "deposit":
+                    modify = 0.05;
+                    gain = (capital + profit) * modify;
+                    profit += gain;
+                    break;
+            }
+            purchase.setProfit(profit);
+            purchaseRepository.save(purchase);
+
+            Account account = accountRepository.findAccountByIDCode(purchase.getIDCode());
+            Double total = account.getTotal();
+            total += gain;
+
+            Transaction transaction = new Transaction(account, gain, total, source, new Date());
+            transactionRepository.save(transaction);
+            account.setTotal(total);
+            accountRepository.save(account);
+        }
+        return "success";
+    }
+
+    public List<Purchase> purchaseInfo(String IDCode) {
+        return (List<Purchase>) purchaseRepository.findPurchaseByIDCode(IDCode);
+    }
+
     public Integer accountLevel(String IDCode) {
         Account account = accountRepository.findAccountByIDCode(IDCode);
         Double total = account.getTotal();
@@ -93,10 +141,10 @@ public class FinancialService {
         if (total < price) {
             return "cannot pay financial product";
         } else {
-            total -=  price;
+            total -= price;
             Transaction transaction = new Transaction(account, -price, total, "Financial Management Outlay", date);
             transactionRepository.save(transaction);
-            Purchase purchase = new Purchase(IDCode, name, type, stockAmount, date);
+            Purchase purchase = new Purchase(IDCode, name, type, stockAmount, date, price, 0.0);
             purchaseRepository.save(purchase);
             account.setTotal(total);
             accountRepository.save(account);

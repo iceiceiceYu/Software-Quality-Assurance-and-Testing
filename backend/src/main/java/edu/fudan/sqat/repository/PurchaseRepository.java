@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PurchaseRepository extends CrudRepository<Purchase, Long> {
+    Iterable<Purchase> findAll();
+
+    Iterable<Purchase> findPurchaseByIDCode(String IDCode);
 }

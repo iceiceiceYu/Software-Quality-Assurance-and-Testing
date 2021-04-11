@@ -2,6 +2,7 @@ package edu.fudan.sqat.controller;
 
 import edu.fudan.sqat.controller.request.PurchaseRequest;
 import edu.fudan.sqat.domain.FinancialProduct;
+import edu.fudan.sqat.domain.Purchase;
 import edu.fudan.sqat.service.FinancialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +23,15 @@ public class FinancialController {
         this.financialService = financialService;
     }
 
-    // todo: 自动增长
+    @PostMapping("/financial/increase")
+    public ResponseEntity<String> increase(@RequestBody String username) {
+        return ResponseEntity.ok(financialService.increase());
+    }
 
-    // todo: 购买的理财产品
+    @PostMapping("/financial/purchaseInfo")
+    public ResponseEntity<List<Purchase>> purchaseInfo(@RequestBody String IDCode) {
+        return ResponseEntity.ok(financialService.purchaseInfo(IDCode));
+    }
 
     @PostMapping("/financial/accountLevel")
     public ResponseEntity<Integer> accountLevel(@RequestBody String IDCode) {

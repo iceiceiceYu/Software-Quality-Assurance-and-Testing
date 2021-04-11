@@ -23,16 +23,20 @@ public class Purchase {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date date;
+    private Double capital;
+    private Double profit;
 
     public Purchase() {
     }
 
-    public Purchase(String IDCode, String name, String type, Integer stockAmount, Date date) {
+    public Purchase(String IDCode, String name, String type, Integer stockAmount, Date date, Double capital, Double profit) {
         this.IDCode = IDCode;
         this.name = name;
         this.type = type;
         this.stockAmount = stockAmount;
         this.date = date;
+        this.capital = capital;
+        this.profit = profit;
     }
 
     public Long getId() {
@@ -81,5 +85,21 @@ public class Purchase {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Double getCapital() {
+        return capital;
+    }
+
+    public void setCapital(Double capital) {
+        this.capital = capital;
+    }
+
+    public Double getProfit() {
+        return profit;
+    }
+
+    public void setProfit(Double profit) {
+        this.profit = profit;
     }
 }

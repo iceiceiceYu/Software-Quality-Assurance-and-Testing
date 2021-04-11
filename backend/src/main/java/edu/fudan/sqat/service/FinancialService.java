@@ -137,6 +137,9 @@ public class FinancialService {
 
         FinancialProduct financialProduct = financialProductRepository.findFinancialProductByName(name);
         Double price = financialProduct.getPrice();
+        if (type.equals("stock")) {
+            price *= stockAmount;
+        }
 
         if (total < price) {
             return "cannot pay financial product";

@@ -51,6 +51,16 @@ public class LoanPay {
         this.fineAfterPaid=fineAfterPaid;
     }
 
+    //重写equals方法, 最佳实践就是如下这种判断顺序:
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof LoanPay))
+            return false;
+        if (obj == this)
+            return true;
+        return this.getId().equals(((LoanPay) obj).getId());
+    }
+
     public Long getId() {
         return id;
     }

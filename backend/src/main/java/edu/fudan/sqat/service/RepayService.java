@@ -78,7 +78,7 @@ public class RepayService {
                     //加上新的一期
                     if (loan.getStageCount() > currentPay.getStage()) {
 
-                        LoanPay newPay = new LoanPay(loan.getId(), loan.getAmount()/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
+                        LoanPay newPay = new LoanPay(loan.getId(), (loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
                                 currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,0d);
                         loanPayRepository.save(newPay);
                         List<LoanPay> loanPays = loan.getLoanPays();
@@ -105,7 +105,7 @@ public class RepayService {
 
                     while ((loan.getStageCount() > currentPay.getStage())&&(currentTime.compareTo(currentPay.getEnd())>0)) {
                         ////初始化时 fineAfterPaid总与fine相同
-                       LoanPay newPay = new LoanPay(loan.getId(), (currentPay.getAmount()-currentPay.getMoneyPaid())+loan.getAmount()/loan.getStageCount(), (currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid(), loan.getLoanPays().size() + 1,
+                       LoanPay newPay = new LoanPay(loan.getId(), (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), (currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid(), loan.getLoanPays().size() + 1,
                                 currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,(currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid());
 
                         loanPayRepository.save(newPay);
@@ -129,7 +129,7 @@ public class RepayService {
                         //加上新的一期
                         if (loan.getStageCount() > currentPay.getStage()) {
 
-                            LoanPay newPay = new LoanPay(loan.getId(), loan.getAmount()/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
+                            LoanPay newPay = new LoanPay(loan.getId(), (loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
                                     currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,0d);
                             loanPayRepository.save(newPay);
                             List<LoanPay> loanPays = loan.getLoanPays();
@@ -171,7 +171,7 @@ public class RepayService {
                         //加上新的一期
                         if (loan.getStageCount() > currentPay.getStage()) {
 
-                            LoanPay newPay = new LoanPay(loan.getId(),loan.getAmount()/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
+                            LoanPay newPay = new LoanPay(loan.getId(),(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
                                     currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,0d);
                             loanPayRepository.save(newPay);
                             List<LoanPay> loanPays = loan.getLoanPays();
@@ -239,8 +239,8 @@ public class RepayService {
 
                     while ((loan.getStageCount() > currentPay.getStage())&&(currentTime.compareTo(currentPay.getEnd())>0)) {
                         ////初始化时 fineAfterPaid总与fine相同
-                        //上一期的未还款金额 (currentPay.getAmount()-currentPay.getMoneyPaid())+loan.getAmount()/loan.getStageCount())
-                        LoanPay newPay = new LoanPay(loan.getId(), (currentPay.getAmount()-currentPay.getMoneyPaid())+loan.getAmount()/loan.getStageCount(),
+                        //上一期的未还款金额 (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount())
+                        LoanPay newPay = new LoanPay(loan.getId(), (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(),
                                 (currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid(), loan.getLoanPays().size() + 1,
                                 currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,(currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid());
 
@@ -266,7 +266,7 @@ public class RepayService {
                         //加上新的一期
                         if (loan.getStageCount() > currentPay.getStage()) {
 
-                            LoanPay newPay = new LoanPay(loan.getId(),loan.getAmount()/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
+                            LoanPay newPay = new LoanPay(loan.getId(),(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
                                     currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,0d);
                             loanPayRepository.save(newPay);
                             List<LoanPay> loanPays = loan.getLoanPays();
@@ -371,8 +371,8 @@ public class RepayService {
 
             while ((loan.getStageCount() > currentPay.getStage())&&(currentTime.compareTo(currentPay.getEnd())>0)) {
                 ////初始化时 fineAfterPaid总与fine相同
-                //上一期的未还款金额 (currentPay.getAmount()-currentPay.getMoneyPaid())+loan.getAmount()/loan.getStageCount())
-                LoanPay newPay = new LoanPay(loan.getId(), (currentPay.getAmount()-currentPay.getMoneyPaid())+loan.getAmount()/loan.getStageCount(),
+                //上一期的未还款金额 (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount())
+                LoanPay newPay = new LoanPay(loan.getId(), (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(),
                         (currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid(), loan.getLoanPays().size() + 1,
                         currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,(currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid());
 
@@ -412,7 +412,7 @@ public class RepayService {
                     //新建这个贷款的期
                     if (loan.getStageCount() > currentPay.getStage()) {
 
-                        LoanPay newPay = new LoanPay(loan.getId(),loan.getAmount()/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
+                        LoanPay newPay = new LoanPay(loan.getId(),(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
                                 currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,0d);
                         loanPayRepository.save(newPay);
                         List<LoanPay> loanPays = loan.getLoanPays();

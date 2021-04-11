@@ -15,7 +15,6 @@ public class Account {
     private String IDCode;
     private Double total;
 
-
     public Account() {
     }
 

@@ -18,14 +18,11 @@ public class LoanPay {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private Long loanId;
-
     private Double amount;
-
     private Double fine;
-
-    private Integer stage;
+    private Double fineAfterPaid;
+    private Integer stage;  //1 2 3
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -35,13 +32,14 @@ public class LoanPay {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date end;
 
-    // 判断有没有换完 最后一期money Paid==最后一期amount+fine
+    // 判断有没有还完 最后一期money Paid==最后一期amount 且fineAfterPaid==0
+    //moneyPaid 只算还款部分的moneyPaid
     private Double moneyPaid;
 
     public LoanPay() {
     }
 
-    public LoanPay(Long loanId, Double amount, Double fine, Integer stage, Date start, Date end, Double moneyPaid) {
+    public LoanPay(Long loanId, Double amount, Double fine, Integer stage, Date start, Date end, Double moneyPaid,Double fineAfterPaid) {
         this.loanId = loanId;
         this.amount = amount;
         this.fine = fine;
@@ -49,14 +47,18 @@ public class LoanPay {
         this.start = start;
         this.end = end;
         this.moneyPaid = moneyPaid;
+        //初始化时 fineAfterPaid总与fine相同
+        this.fineAfterPaid=fineAfterPaid;
     }
 
-    public Integer getStage() {
-        return stage;
-    }
-
-    public void setStage(Integer stage) {
-        this.stage = stage;
+    //重写equals方法, 最佳实践就是如下这种判断顺序:
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof LoanPay))
+            return false;
+        if (obj == this)
+            return true;
+        return this.getId().equals(((LoanPay) obj).getId());
     }
 
     public Long getId() {
@@ -91,6 +93,14 @@ public class LoanPay {
         this.fine = fine;
     }
 
+    public Integer getStage() {
+        return stage;
+    }
+
+    public void setStage(Integer stage) {
+        this.stage = stage;
+    }
+
     public Date getStart() {
         return start;
     }
@@ -115,4 +125,11 @@ public class LoanPay {
         this.moneyPaid = moneyPaid;
     }
 
+    public Double getFineAfterPaid() {
+        return fineAfterPaid;
+    }
+
+    public void setFineAfterPaid(Double fineAfterPaid) {
+        this.fineAfterPaid = fineAfterPaid;
+    }
 }

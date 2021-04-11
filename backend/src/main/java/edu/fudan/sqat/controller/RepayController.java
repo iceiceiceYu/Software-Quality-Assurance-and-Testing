@@ -15,30 +15,25 @@ import java.util.List;
 @RestController
 @CrossOrigin
 public class RepayController {
-    private RepayService repayService;
+    private final RepayService repayService;
 
     @Autowired
     public RepayController(RepayService repayService) {
         this.repayService = repayService;
     }
 
-    @PostMapping("/repay/identification")
-    public ResponseEntity<Boolean> identification(@RequestBody String IDCode) {
-        return ResponseEntity.ok(repayService.identification(IDCode));
-    }
-
     @PostMapping("/repay/loanInfo")
-    public ResponseEntity<List<Loan>> loanInfo(@RequestBody Long id) {
-        return ResponseEntity.ok(repayService.loanInfo(id));
+    public ResponseEntity<List<Loan>> loanInfo(@RequestBody Long accountId) throws Exception {
+        return ResponseEntity.ok(repayService.loanInfo(accountId));
     }
 
     @PostMapping("/repay/repayment")
-    public ResponseEntity<String> repayment(@RequestBody RepaymentRequest repaymentRequest) {
-
+    public ResponseEntity<String> repayment(@RequestBody RepaymentRequest repaymentRequest)throws Exception  {
+        return ResponseEntity.ok(repayService.repayment(repaymentRequest));
     }
 
     @PostMapping("/repay/autoRepayment")
-    public ResponseEntity<> autoRepayment(@RequestBody Boolean isAuto){
-
+    public ResponseEntity<?> autoRepayment(@RequestBody Boolean isAuto){
+        return ResponseEntity.ok(repayService.autoRepayment());
     }
 }

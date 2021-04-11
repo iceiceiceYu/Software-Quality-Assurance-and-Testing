@@ -18,24 +18,20 @@ public class Loan {
     private Long id;
 
     @Column(unique = true)
-    private String IDCode;
-
+    private Long accountId;
     private Double amount;
-
     private Integer stageCount;
-
     private Integer interest;
-
     private Boolean isPaidOff;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
-    private List<LoanPay> loanPays = new ArrayList<LoanPay>();
+    private List<LoanPay> loanPays = new ArrayList<>();
 
     public Loan() {
     }
 
-    public Loan(String IDCode, Double amount, Integer stageCount, Integer interest, Boolean isPaidOff) {
-        this.IDCode = IDCode;
+    public Loan(Long id, Double amount, Integer stageCount, Integer interest, Boolean isPaidOff) {
+        this.accountId = id;
         this.amount = amount;
         this.stageCount = stageCount;
         this.interest = interest;
@@ -46,25 +42,10 @@ public class Loan {
         return id;
     }
 
-    public Integer getInterest() {
-        return interest;
-    }
-
-    public void setInterest(Integer interest) {
-        this.interest = interest;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getIDCode() {
-        return IDCode;
-    }
-
-    public void setIDCode(String IDCode) {
-        this.IDCode = IDCode;
-    }
 
     public Double getAmount() {
         return amount;
@@ -82,6 +63,14 @@ public class Loan {
         this.stageCount = stageCount;
     }
 
+    public Integer getInterest() {
+        return interest;
+    }
+
+    public void setInterest(Integer interest) {
+        this.interest = interest;
+    }
+
     public Boolean getPaidOff() {
         return isPaidOff;
     }
@@ -96,5 +85,13 @@ public class Loan {
 
     public void setLoanPays(List<LoanPay> loanPays) {
         this.loanPays = loanPays;
+    }
+
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 }

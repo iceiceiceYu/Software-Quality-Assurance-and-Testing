@@ -13,7 +13,6 @@ public class Client {
 
     @Column(unique = true)
     private String IDCode;
-
     private String name;
     private String gender;
     private Integer age;

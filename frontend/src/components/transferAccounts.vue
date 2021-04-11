@@ -133,12 +133,13 @@
                         this.$notify({
                             title: '余额不足！',
                             type: 'warning'
-                        }).catch(error => {
-                            console.log(error);
-                            alert('网络连接失败')
                         })
                     }
+                }).catch(error => {
+                    console.log(error);
+                    alert('网络连接失败')
                 })
+
             },
         },
     }

@@ -15,9 +15,32 @@
               <el-input type="text" v-model="account.id"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary">查询理财产品</el-button>
+              <el-button type="primary" @click="getCredential">查询理财产品</el-button>
             </el-form-item>
           </el-form>
+        </el-row>
+
+        <el-row>
+          我的理财产品
+          <el-table
+                  :data="myProductTable"
+                  style="width: 100%">
+            <el-table-column
+                    prop="name"
+                    label="名称"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="type"
+                    label="种类"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="price"
+                    label="价格">
+            </el-table-column>
+          </el-table>
+
         </el-row>
 
         <el-divider></el-divider>
@@ -26,7 +49,7 @@
             <p>您的信用等级为：{{this.creditLevel}}级，以下是您可以购买的理财产品：</p>
           </el-col>
           <el-col :span="6">
-          <el-select v-model="value" placeholder="请选择">
+          <el-select v-model="value" placeholder="请选择产品类型">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -35,6 +58,17 @@
               :value="item.value">
             </el-option>
           </el-select>
+
+
+          <el-select v-model="value" placeholder="请选择具体产品">
+            <el-option
+                    v-for="item in productoptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+            </el-option>
+          </el-select>
+
           </el-col>
           <el-col>
             {{this.value}}
@@ -50,14 +84,13 @@
             </el-input>
 
           </el-col>
-          <el-col v-if="this.value==='fund' || this.value==='deposit'">
+          <el-col>
             <el-date-picker
               v-model="purchaseDate"
-              type="date"
+              type="datetime"
               placeholder="选择日期"
               :picker-options="pickerOptions"
-              format="yyyy 年 MM 月 dd 日"
-              value-format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd HH:mm:ss"
             >
             </el-date-picker>
 
@@ -78,10 +111,43 @@
 </template>
 
 <script>
+  import store from '../store'
   export default {
+    mounted() {
+      this.$axios.post('/financial/increase',
+              store.state.username
+      ).then(resp => {
+      }).catch(error => {
+        console.log(error);
+        alert('网络连接失败')
+      })
+    },
       name: "FinancialProducts",
       data() {
+
+        const generateProducts = _ => {
+          const data = []
+          this.$axios.post('/financial/allInfo', this.username)
+                  .then(resp => {
+                    if (resp != null) {
+                      var response = resp.data
+                      response.forEach((product, index) => {
+                        data.push({
+                          name: product.name,
+                          type: product.type,
+                          price: product.price,
+                          disabled: product.type !== this.type
+                        })
+                      })
+                    }
+                  })
+                  .catch(error => {
+                    console.log(error)
+                  })
+          return data
+        }
           return {
+            productName: '',
             accountId: '',
             pickerOptions: {
               disabledDate (time) {
@@ -102,14 +168,50 @@
               label: '定期',
               disable: false
             }],
+            productoptions: generateProducts(),
             value: '',
             creditLevel: 1,
             purchaseDate: '',
-            stockAmount: ''
+            stockAmount: '',
+            myProductTable: []
 
           };
       },
     methods: {
+        getCredential() {
+
+          this.$axios.post('/accountLevel',
+              this.account.id
+          ).then(resp => {
+            this.$notify({
+              title: resp.data,
+              type: 'warning'
+            });
+          }).catch(error => {
+            console.log(error);
+            alert('网络连接失败')
+          })
+
+
+          this.$axios.post('/financial/purchaseInfo',
+                  this.account.id
+          ).then(resp => {
+            if (resp != null) {
+              var response = resp.data
+              response.forEach((product, index) => {
+                this.myProductTable.push({
+                  name: product.name,
+                  type: product.type,
+                  price: product.price
+                })
+              })
+            }
+          })
+                  .catch(error => {
+                    console.log(error)
+                  })
+
+        },
 
         getMyFinancialProducts() {
 
@@ -120,27 +222,28 @@
 
           this.$axios.post('/purchase',
             {
-              accountId: this.accountId,
+              IDCode: this.account.id,
+              name: this.productName,
               type: this.type,
               stockAmount: this.stockAmount,
               date: this.date
             },
           ).then(resp => {
-            // if (resp.data === 'success') {
-            //   this.$notify({
-            //     title: '购买成功！',
-            //     type: 'success'
-            //   });
-            // } else {
-            //   this.$notify({
-            //     title: '购买失败！',
-            //     type: 'warning'
-            //   });
-            // }
-            this.$notify({
-              title: resp.data,
-              type: 'warning'
-            });
+            if (resp.data === 'success') {
+              this.$notify({
+                title: '购买成功！',
+                type: 'success'
+              });
+            } else {
+              this.$notify({
+                title: resp.data,
+                type: 'warning'
+              });
+            }
+            // this.$notify({
+            //   title: resp.data,
+            //   type: 'warning'
+            // });
           }).catch(error => {
             console.log(error);
             alert('网络连接失败')

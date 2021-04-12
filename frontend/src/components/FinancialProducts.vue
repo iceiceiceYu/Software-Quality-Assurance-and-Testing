@@ -101,7 +101,7 @@
 
           </el-col>
           <el-col :span="6"
-                  v-if="this.productName==='stock'">
+                  v-if="this.productType==='stock'">
             <el-input
                     v-model="this.amount"
                     placeholder="请输入您要购买的股数"

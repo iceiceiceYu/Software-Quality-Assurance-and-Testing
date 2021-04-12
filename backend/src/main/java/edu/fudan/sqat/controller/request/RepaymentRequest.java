@@ -24,6 +24,16 @@ public class RepaymentRequest {
         this.currentTime=currentTime;
     }
 
+    @Override
+    public String toString() {
+        return "RepaymentRequest{" +
+                "loanId=" + loanId +
+                ", money=" + money +
+                ", type=" + type +
+                ", currentTime=" + currentTime +
+                '}';
+    }
+
     public Long getLoanId() {
         return loanId;
     }

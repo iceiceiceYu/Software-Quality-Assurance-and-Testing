@@ -3,6 +3,7 @@ package edu.fudan.sqat.service;
 import edu.fudan.sqat.controller.request.RepaymentRequest;
 import edu.fudan.sqat.domain.*;
 import edu.fudan.sqat.domain.Loan;
+import edu.fudan.sqat.exception.PartialRepayException;
 import edu.fudan.sqat.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -64,6 +66,7 @@ public class RepayService {
         if(type==1){
             //全额还款
             //是这笔贷款这一期全部还清
+            System.out.println("全额还款");
             if(money<currentPay.getAmount()+currentPay.getFine()){
                 //此时即便过期 那么真正的期数的钱一定比currentPay时要多，如果过期的那个loanPay都还不了更不可能还"本期"的
                 //因此可以直接 returnError
@@ -72,6 +75,7 @@ public class RepayService {
             else{
                 if(currentTime.compareTo(currentPay.getEnd())<=0) {
                     //按时还清
+                    System.out.println("按时还清");
                     currentPay.setMoneyPaid(currentPay.getAmount());
                     currentPay.setFineAfterPaid(0d);
                     loanPayRepository.save(currentPay);
@@ -87,8 +91,11 @@ public class RepayService {
                         loanRepository.save(loan);
                     }else{
                         //说明最后一期已经还清
-                        loan.setPaidOff(true);
-                        loanRepository.save(loan);
+
+                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001) {
+                            loan.setPaidOff(true);
+                            loanRepository.save(loan);
+                        }
                     }
 
 
@@ -99,6 +106,10 @@ public class RepayService {
                             -currentPay.getAmount() - currentPay.getFine(), account.getTotal(), "Loan Pay Outlay", new Date());
                     transactionRepository.save(transaction);
 
+                    if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
+                        loan.setPaidOff(true);
+                        loanRepository.save(loan);
+                    }
                     return "Success";
                 }else{
                     //如果本期超时，那么本期不能还了 去还当前时刻所在的那一期
@@ -138,8 +149,10 @@ public class RepayService {
                             loanRepository.save(loan);
                         }else{
                             //说明最后一期已经还清
-                            loan.setPaidOff(true);
-                            loanRepository.save(loan);
+                            if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001) {
+                                loan.setPaidOff(true);
+                                loanRepository.save(loan);
+                            }
                         }
 
 
@@ -150,6 +163,11 @@ public class RepayService {
                                 -currentPay.getAmount() - currentPay.getFine(), account.getTotal(), "Loan Pay Outlay", new Date());
                         transactionRepository.save(transaction);
 
+
+                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
+                            loan.setPaidOff(true);
+                            loanRepository.save(loan);
+                        }
                         return "Success";
                     }
 
@@ -160,11 +178,11 @@ public class RepayService {
             if(currentTime.compareTo(currentPay.getEnd())<=0) {
 
                 if (money >currentPay.getAmount() + currentPay.getFine())
-                    throw new Exception("Partial repayment amount cannot be greater than full repayment!");
-
+                    throw new PartialRepayException();
                 //本期的部分还款
-                if (money == currentPay.getAmount() + currentPay.getFine()) {
+                if (money >= currentPay.getAmount()-currentPay.getMoneyPaid() + currentPay.getFineAfterPaid()) {
                     //相当于全额还清
+                    Double pay=(currentPay.getAmount()-currentPay.getMoneyPaid()) +currentPay.getFineAfterPaid();
                     currentPay.setMoneyPaid(currentPay.getAmount());
                     currentPay.setFineAfterPaid(0d);
                     loanPayRepository.save(currentPay);
@@ -180,23 +198,29 @@ public class RepayService {
                         loanRepository.save(loan);
                     }else{
                         //说明最后一期已经还清
-                        loan.setPaidOff(true);
-                        loanRepository.save(loan);
+                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001) {
+                            loan.setPaidOff(true);
+                            loanRepository.save(loan);
+                        }
                     }
 
-                    account.setTotal(account.getTotal() - currentPay.getAmount() - currentPay.getFine());
+                    account.setTotal(account.getTotal() - pay);
                     accountRepository.save(account);
 
                     Transaction transaction = new Transaction(account,
-                            -currentPay.getAmount() - currentPay.getFine(), account.getTotal(), "Loan Pay Outlay", new Date());
+                            - pay, account.getTotal(), "Loan Pay Outlay", new Date());
                     transactionRepository.save(transaction);
 
+                    if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
+                        loan.setPaidOff(true);
+                        loanRepository.save(loan);
+                    }
                     return "Success";
                 } else {
                     //部分还款
-                    if (money >= currentPay.getFine()) {
+                    if (money >= currentPay.getFineAfterPaid()) {
                         //先还罚金
-                        currentPay.setMoneyPaid(money - currentPay.getFine());
+                        currentPay.setMoneyPaid(money - currentPay.getFineAfterPaid()+ currentPay.getMoneyPaid());
                         currentPay.setFineAfterPaid(0d);
                         loanPayRepository.save(currentPay);
 
@@ -210,6 +234,10 @@ public class RepayService {
                                 -money, account.getTotal(), "Loan Pay Outlay", new Date());
                         transactionRepository.save(transaction);
 
+                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
+                            loan.setPaidOff(true);
+                            loanRepository.save(loan);
+                        }
                         return "Success";
 
 
@@ -226,6 +254,10 @@ public class RepayService {
                                 -money, account.getTotal(), "Loan Pay Outlay", new Date());
                         transactionRepository.save(transaction);
 
+                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
+                            loan.setPaidOff(true);
+                            loanRepository.save(loan);
+                        }
                         return "Success";
                     }
 
@@ -256,10 +288,12 @@ public class RepayService {
 
                 //此时的currentPay为当前时间处于的那一期
                 if (money >currentPay.getAmount() + currentPay.getFine())
-                    throw new Exception("Partial repayment amount cannot be greater than full repayment!");
+                    throw new PartialRepayException();
 
-                if (money == currentPay.getAmount() + currentPay.getFine()) {
+                //本期的部分还款
+                if (money >= currentPay.getAmount()-currentPay.getMoneyPaid() + currentPay.getFineAfterPaid()) {
                     //相当于全额还清
+                    Double pay=(currentPay.getAmount()-currentPay.getMoneyPaid()) +currentPay.getFineAfterPaid();
                     currentPay.setMoneyPaid(currentPay.getAmount());
                     currentPay.setFineAfterPaid(0d);
                     loanPayRepository.save(currentPay);
@@ -275,23 +309,29 @@ public class RepayService {
                         loanRepository.save(loan);
                     }else{
                         //说明最后一期已经还清
-                        loan.setPaidOff(true);
-                        loanRepository.save(loan);
+                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001) {
+                            loan.setPaidOff(true);
+                            loanRepository.save(loan);
+                        }
                     }
 
-                    account.setTotal(account.getTotal() - money);
+                    account.setTotal(account.getTotal() - pay);
                     accountRepository.save(account);
 
                     Transaction transaction = new Transaction(account,
-                            -money, account.getTotal(), "Loan Pay Outlay", new Date());
+                            - pay, account.getTotal(), "Loan Pay Outlay", new Date());
                     transactionRepository.save(transaction);
 
+                    if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
+                        loan.setPaidOff(true);
+                        loanRepository.save(loan);
+                    }
                     return "Success";
                 } else {
                     //部分还款
-                    if (money >= currentPay.getFine()) {
+                    if (money >= currentPay.getFineAfterPaid()) {
                         //先还罚金
-                        currentPay.setMoneyPaid(money - currentPay.getFine());
+                        currentPay.setMoneyPaid(money - currentPay.getFineAfterPaid() + currentPay.getMoneyPaid());
                         currentPay.setFineAfterPaid(0d);
                         loanPayRepository.save(currentPay);
 
@@ -305,11 +345,15 @@ public class RepayService {
                                 -money, account.getTotal(), "Loan Pay Outlay", new Date());
                         transactionRepository.save(transaction);
 
+                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
+                            loan.setPaidOff(true);
+                            loanRepository.save(loan);
+                        }
                         return "Success";
 
 
                     } else {
-                        //罚金都不够 那下一次的罚金等于这次所有未还的部分*0。05+未还的罚金
+                        //罚金都不够
                         //当前moneyPaid为零 因为连罚金都没有还够
                         currentPay.setFineAfterPaid(currentPay.getFine() - money);
                         loanPayRepository.save(currentPay);
@@ -321,14 +365,15 @@ public class RepayService {
                                 -money, account.getTotal(), "Loan Pay Outlay", new Date());
                         transactionRepository.save(transaction);
 
+                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
+                            loan.setPaidOff(true);
+                            loanRepository.save(loan);
+                        }
                         return "Success";
                     }
 
-
-
                 }
-
-            }
+                }
 
         }else{
             throw new Exception("type is invalid!");
@@ -354,7 +399,7 @@ public class RepayService {
         List<LoanPay> targetList=new ArrayList<LoanPay>();
         for(LoanPay loanPay:loanPayList){
             Loan loan=loanRepository.findById(loanPay.getLoanId()).get();
-            if(currentTime.compareTo(loanPay.getEnd())>0 && loanPay.getMoneyPaid()<loanPay.getAmount() && loanPay.getFineAfterPaid()>0){
+            if(currentTime.compareTo(loanPay.getEnd())>0 && (loanPay.getMoneyPaid()<loanPay.getAmount() || loanPay.getFineAfterPaid()>0)){
                 //满足超时且未还清
                 if(loan.getLoanPays().get(loan.getLoanPays().size()-1).equals(loanPay))
                 {

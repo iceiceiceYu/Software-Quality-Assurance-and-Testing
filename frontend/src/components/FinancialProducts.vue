@@ -36,8 +36,8 @@
                     width="180">
             </el-table-column>
             <el-table-column
-                    prop="price"
-                    label="价格">
+                    prop="profit"
+                    label="盈亏">
             </el-table-column>
           </el-table>
 
@@ -251,6 +251,7 @@
                   this.account.id
           ).then(resp => {
             if (resp != null) {
+              console.log(resp.data)
               var response = resp.data
               response.forEach((product, index) => {
                 this.myProductTable.push({

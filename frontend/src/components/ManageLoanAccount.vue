@@ -126,7 +126,7 @@
                     this.messageForm.id //身份证号
                 ).then(resp => {
                   this.Account=[]
-                    if (resp.data != null) {
+                    if (resp.data.id != null) {
                       console.log(resp.data)
                         // this.Account = resp.data
                       this.Account.push({
@@ -151,18 +151,20 @@
                     this.selectedAccount.id //账户号
                 ).then(resp => {
                   this.Loan=[]
-                  console.log(resp.data)
-                  var response = resp.data
-                  response.forEach((loan, index) => {
+                  if (resp.data != null) {
+                    console.log(resp.data)
+                    var response = resp.data
+                    response.forEach((loan, index) => {
 
-                    this.Loan.push({
-                      id: loan.accountId,
-                      amount: loan.amount,
-                      stage: loan.stageCount,
-                      interest: loan.interest,
-                      isPaidOff: loan.paidOff
+                      this.Loan.push({
+                        id: loan.id,
+                        amount: loan.amount,
+                        stage: loan.stageCount,
+                        interest: loan.interest,
+                        isPaidOff: loan.paidOff
+                      })
                     })
-                  })
+                  }
 
 
                 }).catch(error => {

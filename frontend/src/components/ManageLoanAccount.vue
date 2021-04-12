@@ -95,18 +95,8 @@
                     </el-table>
                 </el-row>
                 <el-divider></el-divider>
-                <el-row>
-                    <el-col :span="6">
-                        <p>当前时间是（测试用,记得删）</p>
-                    </el-col>
-                    <el-col :span="4">
-                    <el-date-picker
-                            v-model="time"
-                            type="datetime"
-                            placeholder="选择日期时间">
-                    </el-date-picker>
-                    </el-col>
-                </el-row>
+
+
 
 
             </el-main>
@@ -135,6 +125,7 @@
                 this.$axios.post('/client/accountInfo',
                     this.messageForm.id //身份证号
                 ).then(resp => {
+                  this.Account=[]
                     if (resp.data != null) {
                       console.log(resp.data)
                         // this.Account = resp.data
@@ -159,6 +150,8 @@
                 this.$axios.post('/repay/loanInfo',
                     this.selectedAccount.id //账户号
                 ).then(resp => {
+                  this.Loan=[]
+                  console.log(resp.data)
                   var response = resp.data
                   response.forEach((loan, index) => {
 
@@ -167,7 +160,7 @@
                       amount: loan.amount,
                       stage: loan.stageCount,
                       interest: loan.interest,
-                      isPaidOff: loan.isPaidOff
+                      isPaidOff: loan.paidOff
                     })
                   })
 

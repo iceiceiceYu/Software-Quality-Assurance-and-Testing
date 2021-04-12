@@ -96,7 +96,11 @@
                     this.messageForm.id //身份证号
                 ).then(resp => {
                     if (resp.data != null) {
-                        this.Account = resp.data
+                        this.Account.push({
+                            id: resp.data.id,
+                            IDCode: resp.data.idcode,
+                            total: resp.data.total
+                        })
                     } else {
                         this.$notify({
                             title: '没有找到对应账户',

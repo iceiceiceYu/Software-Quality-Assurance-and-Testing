@@ -21,7 +21,7 @@ public class Loan {
     private Long accountId;
     private Double amount;
     private Integer stageCount;
-    private Integer interest;
+    private Double interest;
     private Boolean isPaidOff;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
@@ -30,7 +30,7 @@ public class Loan {
     public Loan() {
     }
 
-    public Loan(Long id, Double amount, Integer stageCount, Integer interest, Boolean isPaidOff) {
+    public Loan(Long id, Double amount, Integer stageCount, Double interest, Boolean isPaidOff) {
         this.accountId = id;
         this.amount = amount;
         this.stageCount = stageCount;
@@ -63,11 +63,11 @@ public class Loan {
         this.stageCount = stageCount;
     }
 
-    public Integer getInterest() {
+    public Double getInterest() {
         return interest;
     }
 
-    public void setInterest(Integer interest) {
+    public void setInterest(Double interest) {
         this.interest = interest;
     }
 

@@ -193,8 +193,10 @@
                         });
                     }
                 }).catch(error => {
-                    console.log(error);
-                    alert('网络连接失败')
+                    this.$notify({
+                        title: '归还失败！',
+                        type: 'warning'
+                    });
                 })
             },
 
@@ -224,8 +226,10 @@
                             });
                         }
                     }).catch(error => {
-                        console.log(error);
-                        alert('网络连接失败')
+                        this.$notify({
+                            title: '归还失败！',
+                            type: 'warning'
+                        });
                     })
                 })
             }

@@ -18,7 +18,8 @@
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
-                    value-format="yyyy-mm-dd"
+                    format="yyyy-MM-dd"
+                    value-format="yyyy-MM-dd"
             >
             </el-date-picker>
           </div>
@@ -112,7 +113,18 @@
                 .then(resp => {
                   if (resp.data === 'Success') {
 
-                    this.Flow = resp.data
+                    var response = resp.data
+                    response.forEach((flow, index) => {
+
+                      this.Flow.push({
+                        id: flow.id,
+                        account: flow.account,
+                        balance: flow.balance,
+                        currentTotal: flow.currentTotal,
+                        source : flow.source,
+                        time: flow.time
+                      })
+                    })
                   }
                 }).catch(error => {
           console.log(error);
@@ -128,10 +140,7 @@
           })
                   .then(resp => {
             if (resp.data === 'Success') {
-              this.$notify({
-                title: '归还成功！',
-                type: 'success'
-              });
+              console.log("ojoindbicuwhn")
 
               var response = resp.data
               response.forEach((flow, index) => {

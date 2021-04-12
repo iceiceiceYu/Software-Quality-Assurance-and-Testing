@@ -153,7 +153,6 @@
             }
           }).catch(error => {
             console.log(error);
-            alert('网络连接失败')
           })
 
 

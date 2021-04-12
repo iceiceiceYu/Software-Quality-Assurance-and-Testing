@@ -141,7 +141,6 @@
       ).then(resp => {
       }).catch(error => {
         console.log(error);
-        alert('网络连接失败')
       })
     },
       name: "FinancialProducts",
@@ -244,7 +243,6 @@
             });
           }).catch(error => {
             console.log(error);
-            alert('网络连接失败')
           })
 
 
@@ -277,7 +275,7 @@
 
         purchase() {
 
-          this.$axios.post('/purchase',
+          this.$axios.post('/financial/purchaseProduct',
             {
               IDCode: this.account.id,
               name: this.productName,

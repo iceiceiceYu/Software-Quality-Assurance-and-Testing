@@ -197,7 +197,7 @@ public class SqatApplication {
                 System.out.println("-23456- account's total : " + account1.getTotal());
                 System.out.println("loan's loanpay size : " + loan1.getLoanPays().size());
                 System.out.println(loan1.getPaidOff());
-                
+
                  */
 
             }

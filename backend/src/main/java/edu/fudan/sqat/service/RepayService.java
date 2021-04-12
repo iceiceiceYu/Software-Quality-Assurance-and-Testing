@@ -67,6 +67,7 @@ public class RepayService {
             //全额还款
             //是这笔贷款这一期全部还清
             System.out.println("全额还款");
+            money=account.getTotal();
             if(money<currentPay.getAmount()+currentPay.getFine()){
                 //此时即便过期 那么真正的期数的钱一定比currentPay时要多，如果过期的那个loanPay都还不了更不可能还"本期"的
                 //因此可以直接 returnError
@@ -175,6 +176,9 @@ public class RepayService {
             }
         }else if(type==0){
             //部分还款
+            if(money>account.getTotal())
+                throw new Exception("You don't have so much money in the account!");
+
             if(currentTime.compareTo(currentPay.getEnd())<=0) {
 
                 if (money >currentPay.getAmount() + currentPay.getFine())

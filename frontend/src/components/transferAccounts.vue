@@ -73,7 +73,7 @@
                 dialogFormVisible: false,
                 transferForm: {
                     amount: '',
-                    toIDDode: '',
+                    toIDCode: '',
                 },
                 messageForm: {
                     id: '',
@@ -95,7 +95,8 @@
                 this.$axios.post('/client/accountInfo',
                     this.messageForm.id //身份证号
                 ).then(resp => {
-                    if (resp.data != null) {
+                  this.Account=[]
+                    if (resp.data.id != null) {
                         this.Account.push({
                             id: resp.data.id,
                             IDCode: resp.data.idcode,
@@ -118,8 +119,8 @@
             },
             trans() {
                 this.$axios.post('/client/transfer', {
-                    fromIdCode: this.selectedAccount.id,
-                    toIdCode: this.transferForm.toIDDode,
+                    fromIDCode: this.selectedAccount.IDCode,
+                    toIDCode: this.transferForm.toIDCode,
                     amount: this.transferForm.amount
                 }).then(resp => {
                     if (resp.data === 'success') {

@@ -48,8 +48,11 @@
           <el-col :offset="2" :span="10">
             <p>您的信用等级为：{{this.creditLevel}}级，以下是您可以购买的理财产品：</p>
           </el-col>
+        </el-row>
+
+        <el-row>
           <el-col :span="6">
-          <el-select v-model="value" placeholder="请选择产品类型">
+          <el-select v-model="productName" placeholder="请选择产品类型">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -60,48 +63,67 @@
           </el-select>
 
 
-          <el-select v-model="value" placeholder="请选择具体产品">
-            <el-option
-                    v-for="item in productoptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-            </el-option>
-          </el-select>
+          </el-col >
+          <el-col :span="6">
+            <el-button @click="showProducts">显示产品</el-button>
+
 
           </el-col>
-          <el-col>
-            {{this.value}}
-          </el-col>
-
         </el-row>
+        <br>
         <el-row>
-          <el-col v-if="this.value==='stock'">
+
+
+          <el-col :span="6">
+            <el-select v-model="value1" placeholder="请选择具体产品">
+              <el-option
+                      v-for="item in productoptions"
+                      :key="item.value"
+                      :label="item.label"
+                      :disabled="item.disable"
+                      :value="item.value">
+              </el-option>
+            </el-select>
+          </el-col>
+
+<!--          <el-col>-->
+<!--            {{this.productName}}-->
+<!--          </el-col>-->
+          <el-col :span="6">
+            <el-date-picker
+                    v-model="purchaseDate"
+                    type="datetime"
+                    placeholder="选择日期"
+                    :picker-options="pickerOptions"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+            >
+            </el-date-picker>
+
+          </el-col>
+          <el-col :span="6"
+                  v-if="this.productName==='stock'">
             <el-input
-                    v-model="this.stockAmount"
+                    v-model="this.amount"
                     placeholder="请输入您要购买的股数"
             >
             </el-input>
 
           </el-col>
-          <el-col>
-            <el-date-picker
-              v-model="purchaseDate"
-              type="datetime"
-              placeholder="选择日期"
-              :picker-options="pickerOptions"
-              value-format="yyyy-MM-dd HH:mm:ss"
-            >
-            </el-date-picker>
 
-          </el-col>
           <el-col>
             {{this.purchaseDate}}
           </el-col>
+
+        </el-row>
+        <br>
+
+        <el-row>
+          <el-col :span="6">
           <el-button
-            @click="purchase"
+                  @click="purchase"
 
           >购买</el-button>
+          </el-col>
         </el-row>
 
 
@@ -127,16 +149,19 @@
 
         const generateProducts = _ => {
           const data = []
-          this.$axios.post('/financial/allInfo', this.username)
+          let pName = this.productName
+          this.$axios.post('/financial/allInfo', store.state.username)
                   .then(resp => {
                     if (resp != null) {
                       var response = resp.data
                       response.forEach((product, index) => {
+                        console.log(product.type)
                         data.push({
-                          name: product.name,
-                          type: product.type,
-                          price: product.price,
-                          disabled: product.type !== this.type
+                          value: product.name,
+                          label: product.name,
+                          // type: product.type,
+                          // price: product.price,
+                          // disable: product.type !== pName
                         })
                       })
                     }
@@ -149,6 +174,9 @@
           return {
             productName: '',
             accountId: '',
+            value: '',
+            value1: '',
+            creditLevel: 2,
             pickerOptions: {
               disabledDate (time) {
                 return time.getTime() < Date.now();
@@ -157,35 +185,62 @@
             account: {},
             options: [{
               value: 'stock',
-              label: '股票',
-              disable: this.creditLevel===2 || this.creditLevel===3
+              label: 'stock',
+              disable: (this.creditLevel===2) || (this.creditLevel===3)
             }, {
               value: 'fund',
-              label: '基金',
+              label: 'fund',
               disable: this.creditLevel===3
             }, {
               value: 'deposit',
-              label: '定期',
+              label: 'deposit',
               disable: false
             }],
-            productoptions: generateProducts(),
-            value: '',
-            creditLevel: 1,
+            productoptions: [],
+            // productoptions: generateProducts(),
+
+
             purchaseDate: '',
-            stockAmount: '',
+            amount: '',
             myProductTable: []
 
           };
       },
     methods: {
+      showProducts() {
+        let pName = this.productName
+        this.$axios.post('/financial/allInfo', store.state.username)
+                .then(resp => {
+                  if (resp != null) {
+                    var response = resp.data
+                    this.productoptions = []
+                    response.forEach((product, index) => {
+                      console.log(product.type)
+                      this.productoptions.push({
+                        value: product.name,
+                        label: product.name,
+                        // type: product.type,
+                        // price: product.price,
+                        disable: product.type !== pName
+                      })
+                    })
+                  }
+                })
+                .catch(error => {
+                  console.log(error)
+                })
+      },
         getCredential() {
 
-          this.$axios.post('/accountLevel',
+          this.$axios.post('/financial/accountLevel',
               this.account.id
           ).then(resp => {
+            this.creditLevel = resp.data
+            this.options[0].disable = (this.creditLevel===2) || (this.creditLevel===3)
+            this.options[1].disable = this.creditLevel===3
             this.$notify({
-              title: resp.data,
-              type: 'warning'
+              title: "信用级别："+resp.data,
+              type: 'success'
             });
           }).catch(error => {
             console.log(error);
@@ -202,7 +257,9 @@
                 this.myProductTable.push({
                   name: product.name,
                   type: product.type,
-                  price: product.price
+                  stockAmount: product.stockAmount,
+                  capital: product.capital,
+                  profit: product.profit
                 })
               })
             }

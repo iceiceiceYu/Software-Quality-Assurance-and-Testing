@@ -54,6 +54,17 @@
             >
 
             </el-table-column>
+
+            <el-table-column
+                    prop="currentTotal"
+                    label="currentTotal"
+                    sortable>
+            </el-table-column><el-table-column
+                  prop="source"
+                  label="source"
+                  sortable>
+          </el-table-column>
+
             <el-table-column
               prop="time"
               label="日期"
@@ -78,6 +89,7 @@
 </template>
 
 <script>
+  import store from '../store'
   export default {
     name: "AccountFlow",
     mounted() {
@@ -87,39 +99,13 @@
 
       return {
         dates: '',
-        Flow:[{
-          id: 102313,
-          account: {
-
-          },
-          balance: 40,
-          time: '',
-          source: 'Financial Management Income'
-        },
-          {
-            id: 104513,
-            account: {
-
-            },
-            balance: 31,
-            time: '',
-            source: 'Financial Management Outlay'
-          },
-          {
-            id: 106263,
-            account: {
-
-            },
-            balance: 131,
-            time: '',
-            source: 'Financial Management Outlay'
-          }]
+        Flow:[]
 
       };
     },
     methods: {
       searchWithDate() {
-        this.$axios.post('/searchWithDate', {
+        this.$axios.post('/transaction/find', {
           start: this.dates[0],
           end: this.dates[1]
         })
@@ -135,14 +121,30 @@
       },
 
       getAllFlow() {
-          this.$axios.post('/getAllFlow')
+
+          this.$axios.post('/transaction/find', {
+            start: '2000-01-01 00:00:00',
+            end: '2030-01-01 00:00:00'
+          })
                   .then(resp => {
             if (resp.data === 'Success') {
               this.$notify({
                 title: '归还成功！',
                 type: 'success'
               });
-              this.Flow = resp.data
+
+              var response = resp.data
+              response.forEach((flow, index) => {
+
+                this.Flow.push({
+                  id: flow.id,
+                  account: flow.account,
+                  balance: flow.balance,
+                  currentTotal: flow.currentTotal,
+                  source : flow.source,
+                  time: flow.time
+                })
+              })
             } else {
               this.$notify({
                 title: '归还失败！',

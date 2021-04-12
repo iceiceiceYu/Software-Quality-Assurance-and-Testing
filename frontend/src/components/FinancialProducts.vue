@@ -52,7 +52,7 @@
 
         <el-row>
           <el-col :span="6">
-          <el-select v-model="productName" placeholder="请选择产品类型">
+          <el-select v-model="this.type" placeholder="请选择产品类型">
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -75,7 +75,7 @@
 
 
           <el-col :span="6">
-            <el-select v-model="value1" placeholder="请选择具体产品">
+            <el-select v-model="this.productName" placeholder="请选择具体产品">
               <el-option
                       v-for="item in productoptions"
                       :key="item.value"
@@ -280,8 +280,8 @@
               IDCode: this.account.id,
               name: this.productName,
               type: this.type,
-              stockAmount: this.stockAmount,
-              date: this.date
+              stockAmount: this.amount,
+              date: this.purchaseDate
             },
           ).then(resp => {
             if (resp.data === 'success') {

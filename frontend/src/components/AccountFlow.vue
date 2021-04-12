@@ -106,19 +106,21 @@
     },
     methods: {
       searchWithDate() {
+        console.log(this.dates[0])
+        console.log(this.dates[1])
         this.$axios.post('/transaction/find', {
           start: this.dates[0],
           end: this.dates[1]
         })
                 .then(resp => {
-                  if (resp.data === 'Success') {
+                  if (resp.data != null) {
 
                     var response = resp.data
                     response.forEach((flow, index) => {
 
                       this.Flow.push({
                         id: flow.id,
-                        account: flow.account,
+                        account: flow.account.id,
                         balance: flow.balance,
                         currentTotal: flow.currentTotal,
                         source : flow.source,
@@ -133,21 +135,20 @@
       },
 
       getAllFlow() {
-
           this.$axios.post('/transaction/find', {
             start: '2000-01-01 00:00:00',
             end: '2030-01-01 00:00:00'
           })
                   .then(resp => {
-            if (resp.data === 'Success') {
-              console.log("ojoindbicuwhn")
+            if (resp.data != null) {
+              console.log(resp.data)
 
               var response = resp.data
               response.forEach((flow, index) => {
 
                 this.Flow.push({
                   id: flow.id,
-                  account: flow.account,
+                  account: flow.account.id,
                   balance: flow.balance,
                   currentTotal: flow.currentTotal,
                   source : flow.source,

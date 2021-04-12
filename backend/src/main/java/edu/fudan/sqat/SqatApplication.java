@@ -210,6 +210,8 @@ public class SqatApplication {
                 accountRepository.save(account);
                 account = new Account("34567", 50000.0);
                 accountRepository.save(account);
+                account = new Account("11111", 500000.0);
+                accountRepository.save(account);
             }
 
             private void ClientLoader(ClientRepository clientRepository) {
@@ -219,6 +221,8 @@ public class SqatApplication {
                 client = new Client("23456", "test02", "female", 30);
                 clientRepository.save(client);
                 client = new Client("34567", "test03", "female", 40);
+                clientRepository.save(client);
+                client = new Client("11111", "test04", "female", 45);
                 clientRepository.save(client);
             }
 

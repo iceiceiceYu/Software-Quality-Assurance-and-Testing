@@ -245,7 +245,7 @@ public class SqatApplication {
                 Account account = accountRepository.findAccountByIDCode("12345");
                 Loan loan=new Loan(account.getId(),3000.0,3,0.1,false);
                 loanRepository.save(loan);
-                LoanPay loanPay=new LoanPay(loan.getId(),3000*(1+0.1)/3,0d,1,format.parse("2021-01-02 01:01:01"),format.parse("2021-02-02 01:01:01"),0d,0d);
+                LoanPay loanPay=new LoanPay(loan.getId(),3000*(1+0.1)/3,0d,1,format.parse("2021-02-02 01:01:01"),format.parse("2021-03-02 01:01:01"),0d,0d);
                 loanPayRepository.save(loanPay);
                 loan.getLoanPays().add(loanPay);
                 loanRepository.save(loan);

@@ -45,6 +45,11 @@ public class FinancialController {
 
     @PostMapping("/financial/purchaseProduct")
     public ResponseEntity<String> purchaseProduct(@RequestBody PurchaseRequest purchaseRequest) {
+        System.out.println(purchaseRequest.getIDCode());
+        System.out.println(purchaseRequest.getName());
+        System.out.println(purchaseRequest.getType());
+        System.out.println(purchaseRequest.getStockAmount());
+
         return ResponseEntity.ok(financialService.purchaseProduct(
                 purchaseRequest.getIDCode(),
                 purchaseRequest.getName(),

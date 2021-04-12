@@ -95,7 +95,7 @@ public class FinancialService {
             List<LoanPay> loanPays = loan.getLoanPays();
             Integer stage = loan.getStageCount();
 
-            Double amountPerStage = loanPays.get(1).getAmount();
+            Double amountPerStage = loanPays.get(0).getAmount();
             LoanPay currLoanPay = loanPays.get(loanPays.size() - 1);
             Double currAmount = currLoanPay.getAmount();
             Integer currStage = currLoanPay.getStage();

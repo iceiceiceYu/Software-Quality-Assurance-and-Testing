@@ -1,9 +1,7 @@
 package edu.fudan.sqat;
 
-import edu.fudan.sqat.controller.request.RepaymentRequest;
 import edu.fudan.sqat.domain.*;
 import edu.fudan.sqat.repository.*;
-import edu.fudan.sqat.service.RepayService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -36,7 +34,7 @@ public class SqatApplication {
                 AccountLoader(accountRepository);
                 ClientLoader(clientRepository);
                 FinancialProductLoader(financialProductRepository);
-                LoanAndLoanPayLoader(loanRepository,loanPayRepository);
+                LoanAndLoanPayLoader(loanRepository, loanPayRepository);
                 PurchaseLoader(purchaseRepository);
                 TransactionLoader(transactionRepository, accountRepository);
                 UserLoader(userRepository);
@@ -169,7 +167,7 @@ public class SqatApplication {
                 }
                 System.out.println(accountRepository.findAccountByIDCode("12345").getTotal());
 */
-           //testing req2
+                //testing req2
                 /*
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Account account = accountRepository.findAccountByIDCode("23456");
@@ -199,7 +197,6 @@ public class SqatApplication {
                 System.out.println(loan1.getPaidOff());
 
                  */
-
             }
 
             private void AccountLoader(AccountRepository accountRepository) {
@@ -212,6 +209,10 @@ public class SqatApplication {
                 accountRepository.save(account);
                 account = new Account("11111", 500000.0);
                 accountRepository.save(account);
+                account = new Account("22222", 5000.0);
+                accountRepository.save(account);
+                account = new Account("00000", 1000000.0);
+                accountRepository.save(account);
             }
 
             private void ClientLoader(ClientRepository clientRepository) {
@@ -223,6 +224,10 @@ public class SqatApplication {
                 client = new Client("34567", "test03", "female", 40);
                 clientRepository.save(client);
                 client = new Client("11111", "test04", "female", 45);
+                clientRepository.save(client);
+                client = new Client("22222", "test05", "male", 20);
+                clientRepository.save(client);
+                client = new Client("00000", "test06", "male", 50);
                 clientRepository.save(client);
             }
 
@@ -242,20 +247,27 @@ public class SqatApplication {
                 financialProductRepository.save(financialProduct);
             }
 
-
-
-            private void LoanAndLoanPayLoader(LoanRepository loanRepository,LoanPayRepository loanPayRepository) throws ParseException {
+            private void LoanAndLoanPayLoader(LoanRepository loanRepository, LoanPayRepository loanPayRepository) throws ParseException {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Account account = accountRepository.findAccountByIDCode("12345");
-                Loan loan=new Loan(account.getId(),3000.0,3,0.1,false);
+                Account account;
+                Loan loan;
+                LoanPay loanPay;
+
+                account = accountRepository.findAccountByIDCode("12345");
+                loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
                 loanRepository.save(loan);
-                LoanPay loanPay=new LoanPay(loan.getId(),3000*(1+0.1)/3,0d,1,format.parse("2021-02-02 01:01:01"),format.parse("2021-03-02 01:01:01"),0d,0d);
+                loanPay = new LoanPay(loan.getId(), 3000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-02-02 01:01:01"), format.parse("2021-03-02 01:01:01"), 0.0, 0.0);
                 loanPayRepository.save(loanPay);
                 loan.getLoanPays().add(loanPay);
                 loanRepository.save(loan);
 
-
-
+                account = accountRepository.findAccountByIDCode("22222");
+                loan = new Loan(account.getId(), 5000.0, 3, 0.1, false);
+                loanRepository.save(loan);
+                loanPay = new LoanPay(loan.getId(), 5000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-02-03 01:01:01"), format.parse("2021-03-03 01:01:01"), 0.0, 0.0);
+                loanPayRepository.save(loanPay);
+                loan.getLoanPays().add(loanPay);
+                loanRepository.save(loan);
             }
 
             private void PurchaseLoader(PurchaseRepository purchaseRepository) {

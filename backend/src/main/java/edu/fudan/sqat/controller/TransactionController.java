@@ -24,6 +24,10 @@ public class TransactionController {
 
     @PostMapping("/transaction/find")
     public ResponseEntity<List<Transaction>> find(@RequestBody TransactionRequest transactionRequest) {
+        System.out.println("into function");
+        System.out.println(transactionRequest.getStart());
+        System.out.println(transactionRequest.getEnd());
+
         return ResponseEntity.ok(transactionService.find(transactionRequest.getStart(), transactionRequest.getEnd()));
     }
 }

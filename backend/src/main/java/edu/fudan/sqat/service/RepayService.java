@@ -3,6 +3,7 @@ package edu.fudan.sqat.service;
 import edu.fudan.sqat.controller.request.RepaymentRequest;
 import edu.fudan.sqat.domain.*;
 import edu.fudan.sqat.domain.Loan;
+import edu.fudan.sqat.exception.PartialRepayException;
 import edu.fudan.sqat.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,7 @@ public class RepayService {
         if(type==1){
             //全额还款
             //是这笔贷款这一期全部还清
+            System.out.println("全额还款");
             if(money<currentPay.getAmount()+currentPay.getFine()){
                 //此时即便过期 那么真正的期数的钱一定比currentPay时要多，如果过期的那个loanPay都还不了更不可能还"本期"的
                 //因此可以直接 returnError
@@ -72,6 +74,7 @@ public class RepayService {
             else{
                 if(currentTime.compareTo(currentPay.getEnd())<=0) {
                     //按时还清
+                    System.out.println("按时还清");
                     currentPay.setMoneyPaid(currentPay.getAmount());
                     currentPay.setFineAfterPaid(0d);
                     loanPayRepository.save(currentPay);
@@ -160,8 +163,7 @@ public class RepayService {
             if(currentTime.compareTo(currentPay.getEnd())<=0) {
 
                 if (money >currentPay.getAmount() + currentPay.getFine())
-                    throw new Exception("Partial repayment amount cannot be greater than full repayment!");
-
+                    throw new PartialRepayException();
                 //本期的部分还款
                 if (money == currentPay.getAmount() + currentPay.getFine()) {
                     //相当于全额还清
@@ -256,7 +258,7 @@ public class RepayService {
 
                 //此时的currentPay为当前时间处于的那一期
                 if (money >currentPay.getAmount() + currentPay.getFine())
-                    throw new Exception("Partial repayment amount cannot be greater than full repayment!");
+                    throw new PartialRepayException();
 
                 if (money == currentPay.getAmount() + currentPay.getFine()) {
                     //相当于全额还清

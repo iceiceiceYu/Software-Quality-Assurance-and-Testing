@@ -1,7 +1,9 @@
 package edu.fudan.sqat;
 
+import edu.fudan.sqat.controller.request.RepaymentRequest;
 import edu.fudan.sqat.domain.*;
 import edu.fudan.sqat.repository.*;
+import edu.fudan.sqat.service.RepayService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -34,11 +36,52 @@ public class SqatApplication {
                 AccountLoader(accountRepository);
                 ClientLoader(clientRepository);
                 FinancialProductLoader(financialProductRepository);
-                LoanPayLoader(loanPayRepository);
-                LoanLoader(loanRepository);
+                LoanAndLoanPayLoader(loanRepository,loanPayRepository);
                 PurchaseLoader(purchaseRepository);
                 TransactionLoader(transactionRepository, accountRepository);
                 UserLoader(userRepository);
+
+                //testing req1
+                /*
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Account account1 = accountRepository.findAccountByIDCode("12345");
+                Loan loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+                RepayService repayService=new RepayService(accountRepository,clientRepository,loanPayRepository,loanRepository,transactionRepository);
+                RepaymentRequest repaymentRequest=new RepaymentRequest(loan1.getId(),2300.0,1,format.parse("2021-03-03 01:01:01"));
+
+
+                System.out.println(repayService.repayment(repaymentRequest));
+
+                account1 = accountRepository.findAccountByIDCode("12345");
+                loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+
+                System.out.println("after then account's total : " + account1.getTotal());
+                System.out.println("loan's loanpay size : " + loan1.getLoanPays().size());
+                for(LoanPay loanPay:loan1.getLoanPays()) {
+                    System.out.println("loanpay 应还金额:"+loanPay.getAmount());
+                    System.out.println("----loanpay 's detail : -----");
+                    System.out.println("Fine : " + loanPay.getFine());
+                    System.out.println("AfterPaidFine : " + loanPay.getFineAfterPaid());
+                    System.out.println("MoneyPaid : " + loanPay.getMoneyPaid());
+                }
+*/
+                /*
+                repaymentRequest=new RepaymentRequest(loan1.getId(),1000.0,0,format.parse("2021-04-03 01:01:01"));
+                System.out.println(repayService.repayment(repaymentRequest));
+                account1 = accountRepository.findAccountByIDCode("12345");
+                loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+
+                System.out.println("after then account's total : " + account1.getTotal());
+                System.out.println("loan's loanpay size : " + loan1.getLoanPays().size());
+                for(LoanPay loanPay:loan1.getLoanPays()) {
+                    System.out.println("loanpay 应还金额:"+loanPay.getAmount());
+                    System.out.println("----loanpay 's detail : -----");
+                    System.out.println("Fine : " + loanPay.getFine());
+                    System.out.println("AfterPaidFine : " + loanPay.getFineAfterPaid());
+                    System.out.println("MoneyPaid : " + loanPay.getMoneyPaid());
+                }
+                System.out.println(accountRepository.findAccountByIDCode("12345").getTotal());
+                */
             }
 
             private void AccountLoader(AccountRepository accountRepository) {
@@ -77,11 +120,16 @@ public class SqatApplication {
                 financialProductRepository.save(financialProduct);
             }
 
-            private void LoanPayLoader(LoanPayRepository loanPayRepository) {
 
-            }
 
-            private void LoanLoader(LoanRepository loanRepository) {
+            private void LoanAndLoanPayLoader(LoanRepository loanRepository,LoanPayRepository loanPayRepository) throws ParseException {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Account account = accountRepository.findAccountByIDCode("12345");
+                Loan loan=new Loan(account.getId(),3000.0,3,0.1,false);
+                LoanPay loanPay=new LoanPay(loan.getId(),3000*(1+0.1)/3,0d,1,format.parse("2021-02-02 01:01:01"),format.parse("2021-03-02 01:01:01"),0d,0d);
+                loanPayRepository.save(loanPay);
+                loan.getLoanPays().add(loanPay);
+                loanRepository.save(loan);
 
             }
 

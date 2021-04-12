@@ -275,13 +275,18 @@
         },
 
         purchase() {
+          console.log(this.account.id)
+          console.log(this.productName)
+          console.log(this.productType)
+          console.log(this.amount)
+          console.log(this.purchaseDate)
 
           this.$axios.post('/financial/purchaseProduct',
             {
-              IDCode: this.account.id,
+              idcode: this.account.id,
               name: this.productName,
               type: this.productType,
-              stockAmount: this.amount,
+              stockAmount: this.amount===''?0:this.amount,
               date: this.purchaseDate
             },
           ).then(resp => {

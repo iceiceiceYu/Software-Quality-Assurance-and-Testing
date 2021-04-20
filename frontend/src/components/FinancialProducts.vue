@@ -36,8 +36,8 @@
                     width="180">
             </el-table-column>
             <el-table-column
-                    prop="price"
-                    label="价格">
+                    prop="profit"
+                    label="盈亏">
             </el-table-column>
           </el-table>
 
@@ -101,9 +101,9 @@
 
           </el-col>
           <el-col :span="6"
-                  v-if="this.productName==='stock'">
+                  v-if="this.productType==='stock'">
             <el-input
-                    v-model="this.amount"
+                    v-model="amount"
                     placeholder="请输入您要购买的股数"
             >
             </el-input>
@@ -251,6 +251,7 @@
                   this.account.id
           ).then(resp => {
             if (resp != null) {
+              console.log(resp.data)
               var response = resp.data
               response.forEach((product, index) => {
                 this.myProductTable.push({
@@ -275,13 +276,18 @@
         },
 
         purchase() {
+          console.log(this.account.id)
+          console.log(this.productName)
+          console.log(this.productType)
+          console.log(this.amount)
+          console.log(this.purchaseDate)
 
           this.$axios.post('/financial/purchaseProduct',
             {
-              IDCode: this.account.id,
+              idcode: this.account.id,
               name: this.productName,
               type: this.productType,
-              stockAmount: this.amount,
+              stockAmount: this.amount===''?0:this.amount,
               date: this.purchaseDate
             },
           ).then(resp => {

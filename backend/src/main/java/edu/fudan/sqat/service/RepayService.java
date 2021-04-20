@@ -68,6 +68,7 @@ public class RepayService {
             //是这笔贷款这一期全部还清
             System.out.println("全额还款");
             money=account.getTotal();
+
             if(money<currentPay.getAmount()+currentPay.getFine()){
                 //此时即便过期 那么真正的期数的钱一定比currentPay时要多，如果过期的那个loanPay都还不了更不可能还"本期"的
                 //因此可以直接 returnError
@@ -77,98 +78,21 @@ public class RepayService {
                 if(currentTime.compareTo(currentPay.getEnd())<=0) {
                     //按时还清
                     System.out.println("按时还清");
-                    currentPay.setMoneyPaid(currentPay.getAmount());
-                    currentPay.setFineAfterPaid(0d);
-                    loanPayRepository.save(currentPay);
-                    //加上新的一期
-                    if (loan.getStageCount() > currentPay.getStage()) {
 
-                        LoanPay newPay = new LoanPay(loan.getId(), (loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
-                                currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,0d);
-                        loanPayRepository.save(newPay);
-                        List<LoanPay> loanPays = loan.getLoanPays();
-                        loanPays.add(newPay);
-                        loan.setLoanPays(loanPays);
-                        loanRepository.save(loan);
-                    }else{
-                        //说明最后一期已经还清
-
-                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001) {
-                            loan.setPaidOff(true);
-                            loanRepository.save(loan);
-                        }
-                    }
-
-
-                    account.setTotal(account.getTotal() - currentPay.getAmount() - currentPay.getFine());
-                    accountRepository.save(account);
-
-                    Transaction transaction = new Transaction(account,
-                            -currentPay.getAmount() - currentPay.getFine(), account.getTotal(), "Loan Pay Outlay", new Date());
-                    transactionRepository.save(transaction);
-
-                    if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
-                        loan.setPaidOff(true);
-                        loanRepository.save(loan);
-                    }
+                    fullPayInTime(loan, account, currentPay);
                     return "Success";
                 }else{
                     //如果本期超时，那么本期不能还了 去还当前时刻所在的那一期
 
-                    while ((loan.getStageCount() > currentPay.getStage())&&(currentTime.compareTo(currentPay.getEnd())>0)) {
-                        ////初始化时 fineAfterPaid总与fine相同
-                        LoanPay newPay = new LoanPay(loan.getId(), (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), (currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid(), loan.getLoanPays().size() + 1,
-                                currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,(currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid());
+                    currentPay = findCurrentLoanPay(loan, currentPay, currentTime);
 
-                        loanPayRepository.save(newPay);
-                        List<LoanPay> loanPays = loan.getLoanPays();
-                        loanPays.add(newPay);
-                        loan.setLoanPays(loanPays);
-                        loanRepository.save(loan);
-
-                        currentPay=loan.getLoanPays().get(loan.getLoanPays().size()-1);
-
-                    }
                     //此时的currentPay为当前时间处于的那一期
                     if(money<currentPay.getAmount()+currentPay.getFine()) {
                         return "Error";
                     }
                     else{
                         //按时还清
-                        currentPay.setMoneyPaid(currentPay.getAmount());
-                        currentPay.setFineAfterPaid(0d);
-                        loanPayRepository.save(currentPay);
-                        //加上新的一期
-                        if (loan.getStageCount() > currentPay.getStage()) {
-
-                            LoanPay newPay = new LoanPay(loan.getId(), (loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
-                                    currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,0d);
-                            loanPayRepository.save(newPay);
-                            List<LoanPay> loanPays = loan.getLoanPays();
-                            loanPays.add(newPay);
-                            loan.setLoanPays(loanPays);
-                            loanRepository.save(loan);
-                        }else{
-                            //说明最后一期已经还清
-                            if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001) {
-                                loan.setPaidOff(true);
-                                loanRepository.save(loan);
-                            }
-                        }
-
-
-                        account.setTotal(account.getTotal() - currentPay.getAmount() - currentPay.getFine());
-                        accountRepository.save(account);
-
-                        Transaction transaction = new Transaction(account,
-                                -currentPay.getAmount() - currentPay.getFine(), account.getTotal(), "Loan Pay Outlay", new Date());
-                        transactionRepository.save(transaction);
-
-
-                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
-                            loan.setPaidOff(true);
-                            loanRepository.save(loan);
-                        }
+                        fullPayInTime(loan, account, currentPay);
                         return "Success";
                     }
 
@@ -182,208 +106,165 @@ public class RepayService {
             if(currentTime.compareTo(currentPay.getEnd())<=0) {
 
                 if (money >currentPay.getAmount() + currentPay.getFine())
-                    throw new PartialRepayException();
-                //本期的部分还款
-                if (money >= currentPay.getAmount()-currentPay.getMoneyPaid() + currentPay.getFineAfterPaid()) {
-                    //相当于全额还清
-                    Double pay=(currentPay.getAmount()-currentPay.getMoneyPaid()) +currentPay.getFineAfterPaid();
-                    currentPay.setMoneyPaid(currentPay.getAmount());
-                    currentPay.setFineAfterPaid(0d);
-                    loanPayRepository.save(currentPay);
-                    //加上新的一期
-                    if (loan.getStageCount() > currentPay.getStage()) {
+                    return "Error";
 
-                        LoanPay newPay = new LoanPay(loan.getId(),(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
-                                currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,0d);
-                        loanPayRepository.save(newPay);
-                        List<LoanPay> loanPays = loan.getLoanPays();
-                        loanPays.add(newPay);
-                        loan.setLoanPays(loanPays);
-                        loanRepository.save(loan);
-                    }else{
-                        //说明最后一期已经还清
-                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001) {
-                            loan.setPaidOff(true);
-                            loanRepository.save(loan);
-                        }
-                    }
+                realPartialPayment(loan, account, money, currentPay);
 
-                    account.setTotal(account.getTotal() - pay);
-                    accountRepository.save(account);
-
-                    Transaction transaction = new Transaction(account,
-                            - pay, account.getTotal(), "Loan Pay Outlay", new Date());
-                    transactionRepository.save(transaction);
-
-                    if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
-                        loan.setPaidOff(true);
-                        loanRepository.save(loan);
-                    }
-                    return "Success";
-                } else {
-                    //部分还款
-                    if (money >= currentPay.getFineAfterPaid()) {
-                        //先还罚金
-                        currentPay.setMoneyPaid(money - currentPay.getFineAfterPaid()+ currentPay.getMoneyPaid());
-                        currentPay.setFineAfterPaid(0d);
-                        loanPayRepository.save(currentPay);
-
-                        //未过期的部分还款不应该新建新的期，因为有可能之后还会还
-                        //之前全额还款本期已经全部结束 不能再还了 或者本期已经全部还清
-
-                        account.setTotal(account.getTotal() - money);
-                        accountRepository.save(account);
-
-                        Transaction transaction = new Transaction(account,
-                                -money, account.getTotal(), "Loan Pay Outlay", new Date());
-                        transactionRepository.save(transaction);
-
-                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
-                            loan.setPaidOff(true);
-                            loanRepository.save(loan);
-                        }
-                        return "Success";
-
-
-                    } else {
-                        //罚金都不够
-                        //当前moneyPaid为零 因为连罚金都没有还够
-                        currentPay.setFineAfterPaid(currentPay.getFine() - money);
-                        loanPayRepository.save(currentPay);
-
-                        account.setTotal(account.getTotal() - money);
-                        accountRepository.save(account);
-
-                        Transaction transaction = new Transaction(account,
-                                -money, account.getTotal(), "Loan Pay Outlay", new Date());
-                        transactionRepository.save(transaction);
-
-                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
-                            loan.setPaidOff(true);
-                            loanRepository.save(loan);
-                        }
-                        return "Success";
-                    }
-
-
-
-                }
+                return "Success";
 
             } else{
                 //过期的 部分还款
                 //如果本期超时，那么本期不能还了 去还当前时刻所在的那一期
 
-                while ((loan.getStageCount() > currentPay.getStage())&&(currentTime.compareTo(currentPay.getEnd())>0)) {
-                    ////初始化时 fineAfterPaid总与fine相同
-                    //上一期的未还款金额 (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount())
-                    LoanPay newPay = new LoanPay(loan.getId(), (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(),
-                            (currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid(), loan.getLoanPays().size() + 1,
-                            currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,(currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid());
-
-                    loanPayRepository.save(newPay);
-                    List<LoanPay> loanPays = loan.getLoanPays();
-                    loanPays.add(newPay);
-                    loan.setLoanPays(loanPays);
-                    loanRepository.save(loan);
-
-                    currentPay=loan.getLoanPays().get(loan.getLoanPays().size()-1);
-
-                }
+                currentPay = findCurrentLoanPay(loan, currentPay, currentTime);
 
                 //此时的currentPay为当前时间处于的那一期
                 if (money >currentPay.getAmount() + currentPay.getFine())
-                    throw new PartialRepayException();
+                    return "Error";
 
                 //本期的部分还款
-                if (money >= currentPay.getAmount()-currentPay.getMoneyPaid() + currentPay.getFineAfterPaid()) {
-                    //相当于全额还清
-                    Double pay=(currentPay.getAmount()-currentPay.getMoneyPaid()) +currentPay.getFineAfterPaid();
-                    currentPay.setMoneyPaid(currentPay.getAmount());
-                    currentPay.setFineAfterPaid(0d);
-                    loanPayRepository.save(currentPay);
-                    //加上新的一期
-                    if (loan.getStageCount() > currentPay.getStage()) {
+                realPartialPayment(loan, account, money, currentPay);
+                return "Success";
+            }
 
-                        LoanPay newPay = new LoanPay(loan.getId(),(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
-                                currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,0d);
-                        loanPayRepository.save(newPay);
-                        List<LoanPay> loanPays = loan.getLoanPays();
-                        loanPays.add(newPay);
-                        loan.setLoanPays(loanPays);
-                        loanRepository.save(loan);
-                    }else{
-                        //说明最后一期已经还清
-                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001) {
-                            loan.setPaidOff(true);
-                            loanRepository.save(loan);
-                        }
-                    }
-
-                    account.setTotal(account.getTotal() - pay);
-                    accountRepository.save(account);
-
-                    Transaction transaction = new Transaction(account,
-                            - pay, account.getTotal(), "Loan Pay Outlay", new Date());
-                    transactionRepository.save(transaction);
-
-                    if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
-                        loan.setPaidOff(true);
-                        loanRepository.save(loan);
-                    }
-                    return "Success";
-                } else {
-                    //部分还款
-                    if (money >= currentPay.getFineAfterPaid()) {
-                        //先还罚金
-                        currentPay.setMoneyPaid(money - currentPay.getFineAfterPaid() + currentPay.getMoneyPaid());
-                        currentPay.setFineAfterPaid(0d);
-                        loanPayRepository.save(currentPay);
-
-                        //未过期的部分还款不应该新建新的期，因为有可能之后还会还
-                        //之前全额还款本期已经全部结束 不能再还了 或者本期已经全部还清
-
-                        account.setTotal(account.getTotal() - money);
-                        accountRepository.save(account);
-
-                        Transaction transaction = new Transaction(account,
-                                -money, account.getTotal(), "Loan Pay Outlay", new Date());
-                        transactionRepository.save(transaction);
-
-                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
-                            loan.setPaidOff(true);
-                            loanRepository.save(loan);
-                        }
-                        return "Success";
-
-
-                    } else {
-                        //罚金都不够
-                        //当前moneyPaid为零 因为连罚金都没有还够
-                        currentPay.setFineAfterPaid(currentPay.getFine() - money);
-                        loanPayRepository.save(currentPay);
-
-                        account.setTotal(account.getTotal() - money);
-                        accountRepository.save(account);
-
-                        Transaction transaction = new Transaction(account,
-                                -money, account.getTotal(), "Loan Pay Outlay", new Date());
-                        transactionRepository.save(transaction);
-
-                        if(loan.getLoanPays().get(loan.getLoanPays().size()-1).getAmount()-loan.getLoanPays().get(loan.getLoanPays().size()-1).getMoneyPaid()+loan.getLoanPays().get(loan.getLoanPays().size()-1).getFineAfterPaid()<0.00001&&loan.getStageCount() ==currentPay.getStage()) {
-                            loan.setPaidOff(true);
-                            loanRepository.save(loan);
-                        }
-                        return "Success";
-                    }
-
-                }
-                }
 
         }else{
             throw new Exception("type is invalid!");
         }
 
 
+    }
+
+    private LoanPay findCurrentLoanPay(Loan loan, LoanPay currentPay, Date currentTime) {
+        while ((loan.getStageCount() > currentPay.getStage()) && (currentTime.compareTo(currentPay.getEnd()) > 0)) {
+            ////初始化时 fineAfterPaid总与fine相同
+            //上一期的未还款金额 (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount())
+            LoanPay newPay = new LoanPay(loan.getId(), (currentPay.getAmount() - currentPay.getMoneyPaid()) + (loan.getAmount() * (1 + loan.getInterest())) / loan.getStageCount(),
+                    (currentPay.getAmount() - currentPay.getMoneyPaid()) * 0.05 + currentPay.getFineAfterPaid(), loan.getLoanPays().size() + 1,
+                    currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d, (currentPay.getAmount() - currentPay.getMoneyPaid()) * 0.05 + currentPay.getFineAfterPaid());
+
+            loanPayRepository.save(newPay);
+            List<LoanPay> loanPays = loan.getLoanPays();
+            loanPays.add(newPay);
+            loan.setLoanPays(loanPays);
+            loanRepository.save(loan);
+
+            currentPay = loan.getLoanPays().get(loan.getLoanPays().size() - 1);
+
+        }
+        return currentPay;
+    }
+
+    private void realPartialPayment(Loan loan, Account account, Double money, LoanPay currentPay) {
+        //本期的部分还款
+        if (money >= currentPay.getAmount() - currentPay.getMoneyPaid() + currentPay.getFineAfterPaid()) {
+            //相当于全额还清
+            Double pay = (currentPay.getAmount() - currentPay.getMoneyPaid()) + currentPay.getFineAfterPaid();
+            currentPay.setMoneyPaid(currentPay.getAmount());
+            currentPay.setFineAfterPaid(0d);
+            loanPayRepository.save(currentPay);
+
+            //加上新的一期
+            addNewLoanPay(loan, currentPay);
+
+            account.setTotal(account.getTotal() - pay);
+            accountRepository.save(account);
+
+            Transaction transaction = new Transaction(account,
+                    -pay, account.getTotal(), "Loan Pay Outlay", new Date());
+            transactionRepository.save(transaction);
+
+            if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001 && loan.getStageCount() == currentPay.getStage()) {
+                loan.setPaidOff(true);
+                loanRepository.save(loan);
+            }
+
+        } else {
+            //部分还款
+            if (money >= currentPay.getFineAfterPaid()) {
+                //先还罚金
+                currentPay.setMoneyPaid(money - currentPay.getFineAfterPaid() + currentPay.getMoneyPaid());
+                currentPay.setFineAfterPaid(0d);
+                loanPayRepository.save(currentPay);
+
+                //未过期的部分还款不应该新建新的期，因为有可能之后还会还
+                //之前全额还款本期已经全部结束 不能再还了 或者本期已经全部还清
+
+                account.setTotal(account.getTotal() - money);
+                accountRepository.save(account);
+
+                Transaction transaction = new Transaction(account,
+                        -money, account.getTotal(), "Loan Pay Outlay", new Date());
+                transactionRepository.save(transaction);
+
+                if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001 && loan.getStageCount() == currentPay.getStage()) {
+                    loan.setPaidOff(true);
+                    loanRepository.save(loan);
+                }
+
+
+            } else {
+                //罚金都不够
+                //当前moneyPaid为零 因为连罚金都没有还够
+                currentPay.setFineAfterPaid(currentPay.getFine() - money);
+                loanPayRepository.save(currentPay);
+
+                account.setTotal(account.getTotal() - money);
+                accountRepository.save(account);
+
+                Transaction transaction = new Transaction(account,
+                        -money, account.getTotal(), "Loan Pay Outlay", new Date());
+                transactionRepository.save(transaction);
+
+                if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001 && loan.getStageCount() == currentPay.getStage()) {
+                    loan.setPaidOff(true);
+                    loanRepository.save(loan);
+                }
+
+            }
+
+
+        }
+    }
+
+    private void addNewLoanPay(Loan loan, LoanPay currentPay) {
+        if (loan.getStageCount() > currentPay.getStage()) {
+
+            LoanPay newPay = new LoanPay(loan.getId(), (loan.getAmount() * (1 + loan.getInterest())) / loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
+                    currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d, 0d);
+            loanPayRepository.save(newPay);
+            List<LoanPay> loanPays = loan.getLoanPays();
+            loanPays.add(newPay);
+            loan.setLoanPays(loanPays);
+            loanRepository.save(loan);
+        } else {
+            //说明最后一期已经还清
+            if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001) {
+                loan.setPaidOff(true);
+                loanRepository.save(loan);
+            }
+        }
+    }
+
+    private void fullPayInTime(Loan loan, Account account, LoanPay currentPay) {
+        currentPay.setMoneyPaid(currentPay.getAmount());
+        currentPay.setFineAfterPaid(0d);
+        loanPayRepository.save(currentPay);
+
+        //加上新的一期
+        addNewLoanPay(loan, currentPay);
+
+        account.setTotal(account.getTotal() - currentPay.getAmount() - currentPay.getFine());
+        accountRepository.save(account);
+
+        Transaction transaction = new Transaction(account,
+                -currentPay.getAmount() - currentPay.getFine(), account.getTotal(), "Loan Pay Outlay", new Date());
+        transactionRepository.save(transaction);
+
+        if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001 && loan.getStageCount() == currentPay.getStage()) {
+            loan.setPaidOff(true);
+            loanRepository.save(loan);
+        }
     }
 
     public static Date addDate(Date date,long day) {
@@ -418,22 +299,7 @@ public class RepayService {
             Loan loan=loanRepository.findById(currentPay.getLoanId()).get();
             Account account=accountRepository.findById(loan.getAccountId()).get();
 
-            while ((loan.getStageCount() > currentPay.getStage())&&(currentTime.compareTo(currentPay.getEnd())>0)) {
-                ////初始化时 fineAfterPaid总与fine相同
-                //上一期的未还款金额 (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount())
-                LoanPay newPay = new LoanPay(loan.getId(), (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(),
-                        (currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid(), loan.getLoanPays().size() + 1,
-                        currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,(currentPay.getAmount()-currentPay.getMoneyPaid())*0.05+currentPay.getFineAfterPaid());
-
-                loanPayRepository.save(newPay);
-                List<LoanPay> loanPays = loan.getLoanPays();
-                loanPays.add(newPay);
-                loan.setLoanPays(loanPays);
-                loanRepository.save(loan);
-
-                currentPay=loan.getLoanPays().get(loan.getLoanPays().size()-1);
-
-            }
+            currentPay = findCurrentLoanPay(loan, currentPay, currentTime);
             //此时的currentPay为当前时间处于的那一期
             if(currentPay.getFine()>0){
                 //判断账户欠款中是否包含罚金

@@ -1,7 +1,9 @@
 package edu.fudan.sqat;
 
+import edu.fudan.sqat.controller.request.RepaymentRequest;
 import edu.fudan.sqat.domain.*;
 import edu.fudan.sqat.repository.*;
+import edu.fudan.sqat.service.RepayService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -150,6 +152,13 @@ public class SqatApplication {
                 RepaymentRequest repaymentRequest=new RepaymentRequest(loan1.getId(),2000.0,1,format.parse("2021-02-03 01:01:01"));
                 System.out.println(repayService.repayment(repaymentRequest));
                 System.out.println("after then account's total : " + account1.getTotal());
+                for(LoanPay loanPay:loan1.getLoanPays()) {
+                    System.out.println("loanpay 应还金额:"+loanPay.getAmount());
+                    System.out.println("----loanpay 's detail : -----");
+                    System.out.println("Fine : " + loanPay.getFine());
+                    System.out.println("AfterPaidFine : " + loanPay.getFineAfterPaid());
+                    System.out.println("MoneyPaid : " + loanPay.getMoneyPaid());
+                }
 
                  repaymentRequest=new RepaymentRequest(loan1.getId(),1000.0,0,format.parse("2021-04-03 01:01:01"));
                 System.out.println(repayService.repayment(repaymentRequest));
@@ -167,8 +176,38 @@ public class SqatApplication {
                 }
                 System.out.println(accountRepository.findAccountByIDCode("12345").getTotal());
 */
-                //testing req2
                 /*
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Account account1 = accountRepository.findAccountByIDCode("12345");
+                Loan loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+                RepayService repayService=new RepayService(accountRepository,clientRepository,loanPayRepository,loanRepository,transactionRepository);
+
+                System.out.println("before account's total : " + account1.getTotal());
+                RepaymentRequest repaymentRequest=new RepaymentRequest(loan1.getId(),null,1,format.parse("2021-03-03 01:01:01"));
+                System.out.println(repayService.repayment(repaymentRequest));
+
+                repaymentRequest=new RepaymentRequest(loan1.getId(),null,1,format.parse("2021-04-03 01:01:01"));
+                System.out.println(repayService.repayment(repaymentRequest));
+
+                account1 = accountRepository.findAccountByIDCode("12345");
+                loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+                System.out.println("after then account's total : " + account1.getTotal());
+                System.out.println("loan's loanpay size : " + loan1.getLoanPays().size());
+                for(LoanPay loanPay:loan1.getLoanPays()) {
+                    System.out.println("loanpay 应还金额:"+loanPay.getAmount());
+                    System.out.println("----loanpay 's detail : -----");
+                    System.out.println("Fine : " + loanPay.getFine());
+                    System.out.println("AfterPaidFine : " + loanPay.getFineAfterPaid());
+                    System.out.println("MoneyPaid : " + loanPay.getMoneyPaid());
+                }
+                System.out.println(loan1.getPaidOff());
+
+                 */
+
+
+
+                //testing req2
+/*
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Account account = accountRepository.findAccountByIDCode("23456");
                 Loan loan=new Loan(account.getId(),10000.0,2,0.1,false);
@@ -196,7 +235,8 @@ public class SqatApplication {
                 System.out.println("loan's loanpay size : " + loan1.getLoanPays().size());
                 System.out.println(loan1.getPaidOff());
 
-                 */
+ */
+
             }
 
             private void AccountLoader(AccountRepository accountRepository) {

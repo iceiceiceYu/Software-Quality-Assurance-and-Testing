@@ -38,7 +38,7 @@ public class RepayService {
     }
 
     public List<Loan> loanInfo(Long id) throws Exception {
-        if(accountRepository.findById(id).get()==null){
+        if(!accountRepository.findById(id).isPresent()){
             throw new Exception("the loan id doesn't exist!");
         }
 

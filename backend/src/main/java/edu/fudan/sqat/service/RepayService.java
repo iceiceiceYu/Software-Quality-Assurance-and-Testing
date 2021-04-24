@@ -219,14 +219,9 @@ public class RepayService {
                         -money, account.getTotal(), "Loan Pay Outlay", new Date());
                 transactionRepository.save(transaction);
 
-                if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001 && loan.getStageCount() == currentPay.getStage()) {
-                    loan.setPaidOff(true);
-                    loanRepository.save(loan);
-                }
+                //因为这里罚金都付不起 因此必不可能还清整笔贷款
 
             }
-
-
         }
     }
 

@@ -6,29 +6,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class FinancialServiceTest {
+class TransactionServiceTest {
 
     @Test
-    void increase() {
+    void find() {
     }
 
     @Test
-    void purchaseInfo() {
+    void findAll() {
     }
 
     @Test
-    void accountLevel() {
-    }
-
-    @Test
-    void allInfo() {
-    }
-
-    @Test
-    void purchaseProduct() {
-    }
-
-    @Test
-    void checkFine() {
+    void findBetween() {
     }
 }

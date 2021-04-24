@@ -12,22 +12,10 @@ import java.util.List;
 
 @Service
 public class TransactionService {
-    private final AccountRepository accountRepository;
-    private final ClientRepository clientRepository;
-    private final LoanPayRepository loanPayRepository;
-    private final LoanRepository loanRepository;
     private final TransactionRepository transactionRepository;
 
     @Autowired
-    public TransactionService(AccountRepository accountRepository,
-                              ClientRepository clientRepository,
-                              LoanPayRepository loanPayRepository,
-                              LoanRepository loanRepository,
-                              TransactionRepository transactionRepository) {
-        this.accountRepository = accountRepository;
-        this.clientRepository = clientRepository;
-        this.loanPayRepository = loanPayRepository;
-        this.loanRepository = loanRepository;
+    public TransactionService(TransactionRepository transactionRepository) {
         this.transactionRepository = transactionRepository;
     }
 
@@ -39,11 +27,11 @@ public class TransactionService {
         }
     }
 
-    private List<Transaction> findAll() {
+    public List<Transaction> findAll() {
         return (List<Transaction>) transactionRepository.findAll();
     }
 
-    private List<Transaction> findBetween(String start, String end) throws ParseException {
+    public List<Transaction> findBetween(String start, String end) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date startDate = format.parse(start + " 00:00:00");
         Date endDate = format.parse(end + " 23:59:59");

@@ -115,7 +115,7 @@ class RepayServiceTest {
         //此时用的账户是之前在sqatApplication建立的那个账户
         Account account1 = accountRepository.findAccountByIDCode("12345");
         Loan loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
-        RepayService repayService=new RepayService(accountRepository,clientRepository,loanPayRepository,loanRepository,transactionRepository);
+        RepayService repayService=new RepayService(accountRepository,loanPayRepository,loanRepository,transactionRepository);
 
         RepaymentRequest repaymentRequest=new RepaymentRequest(loan1.getId(),1100.0,0,format.parse("2021-02-03 01:01:01"));
         assertEquals("Success",repayService.repayment(repaymentRequest));
@@ -278,7 +278,7 @@ class RepayServiceTest {
         loan.getLoanPays().add(loanPay);
         loanRepository.save(loan);
 
-        RepayService repayService=new RepayService(accountRepository,clientRepository,loanPayRepository,loanRepository,transactionRepository);
+        RepayService repayService=new RepayService(accountRepository,loanPayRepository,loanRepository,transactionRepository);
         repayService.autoRepayment();
 
         Account account1 = accountRepository.findAccountByIDCode("23456");

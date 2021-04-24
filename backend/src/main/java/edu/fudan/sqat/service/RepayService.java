@@ -50,14 +50,15 @@ public class RepayService {
         /*
         每次都是还完了这一期的 如果还有下一期 新建下一期的进list
          */
-        Loan loan=loanRepository.findById(repaymentRequest.getLoanId()).get();
-        Account account=accountRepository.findById(loan.getAccountId()).get();
-        if(loan==null){
+        if(!loanRepository.findById(repaymentRequest.getLoanId()).isPresent()){
             throw new Exception("the loan id doesn't exist!");
         }
-        if(account==null){
+        Loan loan=loanRepository.findById(repaymentRequest.getLoanId()).get();
+        if(!accountRepository.findById(loan.getAccountId()).isPresent()){
             throw new Exception("the account id doesn't exist!");
         }
+        Account account=accountRepository.findById(loan.getAccountId()).get();
+
         Integer type=repaymentRequest.getType();
         Double money=repaymentRequest.getMoney();
         LoanPay currentPay=loan.getLoanPays().get(loan.getLoanPays().size()-1);
@@ -192,6 +193,8 @@ public class RepayService {
 
                 account.setTotal(account.getTotal() - money);
                 accountRepository.save(account);
+
+                System.out.println("account.getTotal::"+account.getTotal());
 
                 Transaction transaction = new Transaction(account,
                         -money, account.getTotal(), "Loan Pay Outlay", new Date());

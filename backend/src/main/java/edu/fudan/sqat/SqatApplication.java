@@ -62,10 +62,12 @@ public class SqatApplication {
                     System.out.println("Fine : " + loanPay.getFine());
                     System.out.println("AfterPaidFine : " + loanPay.getFineAfterPaid());
                     System.out.println("MoneyPaid : " + loanPay.getMoneyPaid());
+                    System.out.println("start :"+format.format(loanPay.getStart()));
+                    System.out.println("end :"+format.format(loanPay.getEnd()));
                 }
 
-                repaymentRequest=new RepaymentRequest(loan1.getId(),1000.0,0,format.parse("2021-03-09 01:01:01"));
-                System.out.println(repayService.repayment(repaymentRequest));
+                repaymentRequest=new RepaymentRequest(loan1.getId(),1000.0,0,format.parse("2021-03-12 01:01:01"));
+                System.out.println("2222222222"+repayService.repayment(repaymentRequest));
 
                 account1 = accountRepository.findAccountByIDCode("12345");
                 loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
@@ -296,7 +298,7 @@ public class SqatApplication {
                 account = accountRepository.findAccountByIDCode("12345");
                 loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
                 loanRepository.save(loan);
-                loanPay = new LoanPay(loan.getId(), 3000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-04-02 01:01:01"), format.parse("2021-05-02 01:01:01"), 0.0, 0.0);
+                loanPay = new LoanPay(loan.getId(), 3000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-02-02 01:01:01"), format.parse("2021-03-02 01:01:01"), 0.0, 0.0);
                 loanPayRepository.save(loanPay);
                 loan.getLoanPays().add(loanPay);
                 loanRepository.save(loan);

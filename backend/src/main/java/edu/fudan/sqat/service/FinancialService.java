@@ -11,25 +11,19 @@ import java.util.List;
 @Service
 public class FinancialService {
     private final AccountRepository accountRepository;
-    private final ClientRepository clientRepository;
     private final FinancialProductRepository financialProductRepository;
-    private final LoanPayRepository loanPayRepository;
     private final LoanRepository loanRepository;
     private final PurchaseRepository purchaseRepository;
     private final TransactionRepository transactionRepository;
 
     @Autowired
     public FinancialService(AccountRepository accountRepository,
-                            ClientRepository clientRepository,
                             FinancialProductRepository financialProductRepository,
-                            LoanPayRepository loanPayRepository,
                             LoanRepository loanRepository,
                             PurchaseRepository purchaseRepository,
                             TransactionRepository transactionRepository) {
         this.accountRepository = accountRepository;
-        this.clientRepository = clientRepository;
         this.financialProductRepository = financialProductRepository;
-        this.loanPayRepository = loanPayRepository;
         this.loanRepository = loanRepository;
         this.purchaseRepository = purchaseRepository;
         this.transactionRepository = transactionRepository;
@@ -155,7 +149,7 @@ public class FinancialService {
         return "success";
     }
 
-    private Double checkFine(Long accountId) {
+    public Double checkFine(Long accountId) {
         List<Loan> loans = (List<Loan>) loanRepository.findLoanByAccountId(accountId);
 
         for (Loan loan : loans) {

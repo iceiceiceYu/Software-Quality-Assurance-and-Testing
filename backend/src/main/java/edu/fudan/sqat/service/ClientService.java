@@ -30,7 +30,7 @@ public class ClientService {
         return accountRepository.findAccountByIDCode(IDCode);
     }
 
-    private Boolean isValid(String IDCode) {
+    public Boolean isValid(String IDCode) {
         return clientRepository.findClientByIDCode(IDCode) != null;
     }
 

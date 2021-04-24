@@ -7,15 +7,10 @@ import edu.fudan.sqat.domain.Client;
 import edu.fudan.sqat.domain.Loan;
 import edu.fudan.sqat.domain.LoanPay;
 import edu.fudan.sqat.repository.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.rules.*;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -115,7 +110,7 @@ class RepayServiceTest {
         //此时用的账户是之前在sqatApplication建立的那个账户
         Account account1 = accountRepository.findAccountByIDCode("12345");
         Loan loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
-        RepayService repayService=new RepayService(accountRepository,clientRepository,loanPayRepository,loanRepository,transactionRepository);
+        RepayService repayService=new RepayService(accountRepository, loanPayRepository,loanRepository,transactionRepository);
 
         RepaymentRequest repaymentRequest=new RepaymentRequest(loan1.getId(),1100.0,0,format.parse("2021-02-03 01:01:01"));
         assertEquals("Success",repayService.repayment(repaymentRequest));

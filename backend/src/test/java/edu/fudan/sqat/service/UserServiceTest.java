@@ -27,5 +27,4 @@ class UserServiceTest {
         assertNull(userService.login("lisi","lisi"));
         assertNull(userService.login("zhangsan","lisi"));
     }
-
 }

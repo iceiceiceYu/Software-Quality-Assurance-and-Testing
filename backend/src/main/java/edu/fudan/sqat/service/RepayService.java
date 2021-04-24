@@ -19,19 +19,16 @@ import java.util.List;
 @Service
 public class RepayService {
     private final AccountRepository accountRepository;
-    private final ClientRepository clientRepository;
     private final LoanPayRepository loanPayRepository;
     private final LoanRepository loanRepository;
     private final TransactionRepository transactionRepository;
 
     @Autowired
     public RepayService(AccountRepository accountRepository,
-                        ClientRepository clientRepository,
                         LoanPayRepository loanPayRepository,
                         LoanRepository loanRepository,
                         TransactionRepository transactionRepository) {
         this.accountRepository = accountRepository;
-        this.clientRepository = clientRepository;
         this.loanPayRepository = loanPayRepository;
         this.loanRepository = loanRepository;
         this.transactionRepository = transactionRepository;

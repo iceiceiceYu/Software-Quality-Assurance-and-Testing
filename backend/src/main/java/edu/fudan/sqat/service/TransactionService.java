@@ -35,7 +35,6 @@ public class TransactionService {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date startDate = format.parse(start + " 00:00:00");
         Date endDate = format.parse(end + " 23:59:59");
-        System.out.println("2222");
         return (List<Transaction>) transactionRepository.findTransactionByTimeBetween(startDate, endDate);
     }
 }

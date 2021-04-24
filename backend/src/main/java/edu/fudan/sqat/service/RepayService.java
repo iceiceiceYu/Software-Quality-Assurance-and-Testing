@@ -133,7 +133,7 @@ public class RepayService {
 
     }
 
-    public LoanPay findCurrentLoanPay(Loan loan, LoanPay currentPay, Date currentTime) {
+    private LoanPay findCurrentLoanPay(Loan loan, LoanPay currentPay, Date currentTime) {
         while ((loan.getStageCount() > currentPay.getStage()) && (currentTime.compareTo(currentPay.getEnd()) > 0)) {
             ////初始化时 fineAfterPaid总与fine相同
             //上一期的未还款金额 (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount())
@@ -153,7 +153,7 @@ public class RepayService {
         return currentPay;
     }
 
-    public void realPartialPayment(Loan loan, Account account, Double money, LoanPay currentPay) {
+    private void realPartialPayment(Loan loan, Account account, Double money, LoanPay currentPay) {
         //本期的部分还款
         if (money >= currentPay.getAmount() - currentPay.getMoneyPaid() + currentPay.getFineAfterPaid()) {
             //相当于全额还清
@@ -216,18 +216,13 @@ public class RepayService {
                         -money, account.getTotal(), "Loan Pay Outlay", new Date());
                 transactionRepository.save(transaction);
 
-                if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001 && loan.getStageCount() == currentPay.getStage()) {
-                    loan.setPaidOff(true);
-                    loanRepository.save(loan);
-                }
+                //因为这里罚金都付不起 因此必不可能还清整笔贷款
 
             }
-
-
         }
     }
 
-    public void addNewLoanPay(Loan loan, LoanPay currentPay) {
+    private void addNewLoanPay(Loan loan, LoanPay currentPay) {
         if (loan.getStageCount() > currentPay.getStage()) {
 
             LoanPay newPay = new LoanPay(loan.getId(), (loan.getAmount() * (1 + loan.getInterest())) / loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
@@ -246,7 +241,7 @@ public class RepayService {
         }
     }
 
-    public void fullPayInTime(Loan loan, Account account, LoanPay currentPay) {
+    private void fullPayInTime(Loan loan, Account account, LoanPay currentPay) {
         currentPay.setMoneyPaid(currentPay.getAmount());
         currentPay.setFineAfterPaid(0d);
         loanPayRepository.save(currentPay);

@@ -46,7 +46,7 @@ public class SqatApplication {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Account account1 = accountRepository.findAccountByIDCode("12345");
                 Loan loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
-                RepayService repayService=new RepayService(accountRepository,clientRepository,loanPayRepository,loanRepository,transactionRepository);
+                RepayService repayService=new RepayService(accountRepository,loanPayRepository,loanRepository,transactionRepository);
 
                 System.out.println("before account's total : " + account1.getTotal());
                 RepaymentRequest repaymentRequest=new RepaymentRequest(loan1.getId(),1100.0,0,format.parse("2021-02-03 01:01:01"));
@@ -105,7 +105,7 @@ public class SqatApplication {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Account account1 = accountRepository.findAccountByIDCode("12345");
                 Loan loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
-                RepayService repayService=new RepayService(accountRepository,clientRepository,loanPayRepository,loanRepository,transactionRepository);
+                RepayService repayService=new RepayService(accountRepository,loanPayRepository,loanRepository,transactionRepository);
 
                 System.out.println("before account's total : " + account1.getTotal());
                 RepaymentRequest repaymentRequest=new RepaymentRequest(loan1.getId(),2000.0,0,format.parse("2021-03-03 01:01:01"));
@@ -150,7 +150,7 @@ public class SqatApplication {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Account account1 = accountRepository.findAccountByIDCode("12345");
                 Loan loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
-                RepayService repayService=new RepayService(accountRepository,clientRepository,loanPayRepository,loanRepository,transactionRepository);
+                RepayService repayService=new RepayService(accountRepository,loanPayRepository,loanRepository,transactionRepository);
                 RepaymentRequest repaymentRequest=new RepaymentRequest(loan1.getId(),2000.0,1,format.parse("2021-02-03 01:01:01"));
                 System.out.println(repayService.repayment(repaymentRequest));
                 System.out.println("after then account's total : " + account1.getTotal());
@@ -182,7 +182,7 @@ public class SqatApplication {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Account account1 = accountRepository.findAccountByIDCode("12345");
                 Loan loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
-                RepayService repayService=new RepayService(accountRepository,clientRepository,loanPayRepository,loanRepository,transactionRepository);
+                RepayService repayService=new RepayService(accountRepository,loanPayRepository,loanRepository,transactionRepository);
 
                 System.out.println("before account's total : " + account1.getTotal());
                 RepaymentRequest repaymentRequest=new RepaymentRequest(loan1.getId(),null,1,format.parse("2021-03-03 01:01:01"));
@@ -220,7 +220,7 @@ public class SqatApplication {
                 loan.getLoanPays().add(loanPay);
                 loanRepository.save(loan);
 
-                RepayService repayService=new RepayService(accountRepository,clientRepository,loanPayRepository,loanRepository,transactionRepository);
+                RepayService repayService=new RepayService(accountRepository,loanPayRepository,loanRepository,transactionRepository);
                 repayService.autoRepayment();
 
                 Account account1 = accountRepository.findAccountByIDCode("12345");

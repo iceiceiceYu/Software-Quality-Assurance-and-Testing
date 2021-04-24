@@ -238,25 +238,6 @@ class RepayServiceTest {
 
     }
 
-    @Test
-    void findCurrentLoanPay(){
-
-    }
-
-    @Test
-    void realPartialPayment(){
-
-    }
-
-    @Test
-    void addNewLoanPay(){
-
-    }
-
-    @Test
-    void fullPayInTime(){
-
-    }
 
     @Test
     void addDate(){

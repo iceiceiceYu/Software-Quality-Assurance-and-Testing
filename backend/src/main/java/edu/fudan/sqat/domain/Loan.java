@@ -94,4 +94,17 @@ public class Loan {
     public void setAccountId(Long accountId) {
         this.accountId = accountId;
     }
+
+    @Override
+    public String toString() {
+        return "Loan{" +
+                "id=" + id +
+                ", accountId=" + accountId +
+                ", amount=" + amount +
+                ", stageCount=" + stageCount +
+                ", interest=" + interest +
+                ", isPaidOff=" + isPaidOff +
+                ", loanPays=" + loanPays +
+                '}';
+    }
 }

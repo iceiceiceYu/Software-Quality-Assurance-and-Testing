@@ -21,6 +21,22 @@ public class LoanPay {
     private Long loanId;
     private Double amount;
     private Double fine;
+
+    @Override
+    public String toString() {
+        return "LoanPay{" +
+                "id=" + id +
+                ", loanId=" + loanId +
+                ", amount=" + amount +
+                ", fine=" + fine +
+                ", fineAfterPaid=" + fineAfterPaid +
+                ", stage=" + stage +
+                ", start=" + start +
+                ", end=" + end +
+                ", moneyPaid=" + moneyPaid +
+                '}';
+    }
+
     private Double fineAfterPaid;
     private Integer stage;  //1 2 3
 

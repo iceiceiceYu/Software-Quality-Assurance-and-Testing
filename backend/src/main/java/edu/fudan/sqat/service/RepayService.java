@@ -300,6 +300,7 @@ public class RepayService {
                 //判断账户欠款中是否包含罚金
                 //判断账户余额是否大于罚金余额
                 if(account.getTotal()>currentPay.getFine()){
+
                     //从账户中扣除罚金
                     account.setTotal(account.getTotal()-currentPay.getFine());
                     accountRepository.save(account);
@@ -311,6 +312,9 @@ public class RepayService {
 
                 }
                 if(account.getTotal()>currentPay.getAmount()){
+                    System.out.println(loan.toString());
+                    System.out.println(currentPay.toString());
+                    System.out.println("......");
                     //判断账户余额是否大于欠款金额
                     account.setTotal(account.getTotal()-currentPay.getAmount());
                     accountRepository.save(account);
@@ -322,6 +326,7 @@ public class RepayService {
                     //新建这个贷款的期
                     if (loan.getStageCount() > currentPay.getStage()) {
 
+
                         LoanPay newPay = new LoanPay(loan.getId(),(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
                                 currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,0d);
                         loanPayRepository.save(newPay);
@@ -329,7 +334,7 @@ public class RepayService {
                         loanPays.add(newPay);
                         loan.setLoanPays(loanPays);
                         loanRepository.save(loan);
-                    }else{
+                    } else {
                         //说明最后一期已经还清
                         loan.setPaidOff(true);
                         loanRepository.save(loan);

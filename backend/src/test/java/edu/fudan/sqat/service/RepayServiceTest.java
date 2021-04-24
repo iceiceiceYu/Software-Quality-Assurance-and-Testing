@@ -249,6 +249,12 @@ class RepayServiceTest {
     @Test
     void autoRepayment() throws Exception{
 
+        // targetList为空
+        // 账户欠款中包含罚金但钱不够
+        // 账户欠款中不包含罚金但还款钱不够
+        // 账户欠款中不包含罚金，还款钱够
+
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Account account = accountRepository.findAccountByIDCode("23456");
         Loan loan=new Loan(account.getId(),10000.0,2,0.1,false);
@@ -268,6 +274,31 @@ class RepayServiceTest {
         assertTrue( account1.getTotal()>0&&account1.getTotal()<20000.0);
         assertTrue( loan1.getLoanPays().size()==2);
         assertTrue(loan1.getPaidOff());
+
+
+
+        Account account2 = accountRepository.findAccountByIDCode("12345");
+        Loan loan2 = loanRepository.findLoanByAccountId(account2.getId()).iterator().next();
+        loanRepository.save(loan2);
+        account1.setTotal(10000.0);
+        accountRepository.save(account1);
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+
+        Client client = new Client("12", "test01", "male", 25);
+        clientRepository.save(client);
+        account = new Account("12", 10000.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("12");
+        loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
+        loanRepository.save(loan);
+        loanPay = new LoanPay(loan.getId(), 1000.0, 100.0, 2, format.parse("2021-02-02 01:01:01"), format.parse("2021-05-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+
+        repayService.autoRepayment();
+
+
     }
 
 

@@ -149,7 +149,7 @@ public class FinancialService {
         return "success";
     }
 
-    private Double checkFine(Long accountId) {
+    public Double checkFine(Long accountId) {
         List<Loan> loans = (List<Loan>) loanRepository.findLoanByAccountId(accountId);
 
         for (Loan loan : loans) {

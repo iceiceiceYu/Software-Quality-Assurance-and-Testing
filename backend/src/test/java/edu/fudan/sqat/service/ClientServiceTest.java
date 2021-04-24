@@ -22,13 +22,19 @@ class ClientServiceTest {
 
     @Test
     void accountInfo() {
-        Client client =new Client("123","name","male",18);
+        Client client = new Client("123", "name", "male", 18);
         clientRepository.save(client);
-        Account account =new Account("123");
+        Account account = new Account("123");
         accountRepository.save(account);
         clientService.accountInfo("123");
         assertNotNull(clientService.accountInfo("123"));
         assertNull(clientService.accountInfo("0"));
+    }
+
+    @Test
+    void isValid() {
+        assertTrue(clientService.isValid("12345"));
+        assertFalse(clientService.isValid("00000"));
     }
 
     @Test

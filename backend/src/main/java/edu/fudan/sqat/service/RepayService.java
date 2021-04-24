@@ -133,7 +133,7 @@ public class RepayService {
 
     }
 
-    private LoanPay findCurrentLoanPay(Loan loan, LoanPay currentPay, Date currentTime) {
+    public LoanPay findCurrentLoanPay(Loan loan, LoanPay currentPay, Date currentTime) {
         while ((loan.getStageCount() > currentPay.getStage()) && (currentTime.compareTo(currentPay.getEnd()) > 0)) {
             ////初始化时 fineAfterPaid总与fine相同
             //上一期的未还款金额 (currentPay.getAmount()-currentPay.getMoneyPaid())+(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount())
@@ -153,7 +153,7 @@ public class RepayService {
         return currentPay;
     }
 
-    private void realPartialPayment(Loan loan, Account account, Double money, LoanPay currentPay) {
+    public void realPartialPayment(Loan loan, Account account, Double money, LoanPay currentPay) {
         //本期的部分还款
         if (money >= currentPay.getAmount() - currentPay.getMoneyPaid() + currentPay.getFineAfterPaid()) {
             //相当于全额还清
@@ -227,7 +227,7 @@ public class RepayService {
         }
     }
 
-    private void addNewLoanPay(Loan loan, LoanPay currentPay) {
+    public void addNewLoanPay(Loan loan, LoanPay currentPay) {
         if (loan.getStageCount() > currentPay.getStage()) {
 
             LoanPay newPay = new LoanPay(loan.getId(), (loan.getAmount() * (1 + loan.getInterest())) / loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
@@ -246,7 +246,7 @@ public class RepayService {
         }
     }
 
-    private void fullPayInTime(Loan loan, Account account, LoanPay currentPay) {
+    public void fullPayInTime(Loan loan, Account account, LoanPay currentPay) {
         currentPay.setMoneyPaid(currentPay.getAmount());
         currentPay.setFineAfterPaid(0d);
         loanPayRepository.save(currentPay);

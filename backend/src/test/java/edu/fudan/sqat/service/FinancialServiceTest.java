@@ -10,7 +10,6 @@ class FinancialServiceTest {
 
     @Test
     void increase() {
-
     }
 
     @Test
@@ -27,5 +26,9 @@ class FinancialServiceTest {
 
     @Test
     void purchaseProduct() {
+    }
+
+    @Test
+    void checkFine() {
     }
 }

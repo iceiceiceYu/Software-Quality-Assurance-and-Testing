@@ -27,11 +27,11 @@ public class TransactionService {
         }
     }
 
-    private List<Transaction> findAll() {
+    public List<Transaction> findAll() {
         return (List<Transaction>) transactionRepository.findAll();
     }
 
-    private List<Transaction> findBetween(String start, String end) throws ParseException {
+    public List<Transaction> findBetween(String start, String end) throws ParseException {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date startDate = format.parse(start + " 00:00:00");
         Date endDate = format.parse(end + " 23:59:59");

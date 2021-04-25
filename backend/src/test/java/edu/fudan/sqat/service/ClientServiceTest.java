@@ -53,8 +53,6 @@ class ClientServiceTest {
         // 2. to账户不存在
         assertEquals(clientService.transfer("999", "997", 1200.0), "wrong object");
         // 3. 正常
-
         assertEquals(clientService.transfer("999", "998", 800.0), "success");
-
     }
 }

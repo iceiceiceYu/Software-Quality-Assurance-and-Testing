@@ -22,12 +22,12 @@ class ClientServiceTest {
 
     @Test
     void accountInfo() {
-        Client client = new Client("z123", "name", "male", 18);
+        Client client = new Client("zzz123", "name", "male", 18);
         clientRepository.save(client);
-        Account account = new Account("z123");
+        Account account = new Account("zzz123");
         accountRepository.save(account);
-        clientService.accountInfo("z123");
-        assertNotNull(clientService.accountInfo("z123"));
+        clientService.accountInfo("zzz23");
+        assertNotNull(clientService.accountInfo("zzz123"));
         assertNull(clientService.accountInfo("0"));
     }
 

@@ -64,10 +64,10 @@ public class RepayService {
         if(type==1){
             //全额还款
             //是这笔贷款这一期全部还清
-            System.out.println("全额还款");
+
             money=account.getTotal();
 
-            if(money<currentPay.getAmount()+currentPay.getFine()){
+            if(Math.abs(money-currentPay.getAmount()+currentPay.getFine())>0.00001&&money<currentPay.getAmount()+currentPay.getFine()){
                 //此时即便过期 那么真正的期数的钱一定比currentPay时要多，如果过期的那个loanPay都还不了更不可能还"本期"的
                 //因此可以直接 returnError
                 return "Error";
@@ -86,6 +86,7 @@ public class RepayService {
 
                     //此时的currentPay为当前时间处于的那一期
                     if(money<currentPay.getAmount()+currentPay.getFine()) {
+                        System.out.println(" 此时的currentPay为当前时间处于的那一期 --hit true--");
                         return "Error";
                     }
                     else{
@@ -200,7 +201,8 @@ public class RepayService {
                 if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001 && loan.getStageCount() == currentPay.getStage()) {
                     loan.setPaidOff(true);
                     loanRepository.save(loan);
-                }
+                }else
+                    System.out.println("--hit false--");
 
 
             } else {

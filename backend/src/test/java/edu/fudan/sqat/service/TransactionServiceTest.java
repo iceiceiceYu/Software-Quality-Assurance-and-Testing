@@ -6,8 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.text.ParseException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class TransactionServiceTest {
@@ -21,6 +20,8 @@ class TransactionServiceTest {
         assertEquals(4, transactionService.find(null, null).size());
         assertNotNull(transactionService.find("2021-04-01", "2021-04-02"));
         assertEquals(2, transactionService.find("2021-04-01", "2021-04-02").size());
+        assertNull(transactionService.find("2021-04-01", null));
+        assertNull(transactionService.find(null, "2021-04-02"));
     }
 
     @Test

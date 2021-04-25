@@ -57,6 +57,8 @@ public class FinancialService {
                     gain = (capital + profit) * modify;
                     profit += gain;
                     break;
+                default:
+                    continue;
             }
             purchase.setProfit(profit);
             purchaseRepository.save(purchase);

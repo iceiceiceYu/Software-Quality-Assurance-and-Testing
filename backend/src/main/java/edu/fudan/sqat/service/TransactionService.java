@@ -1,7 +1,7 @@
 package edu.fudan.sqat.service;
 
 import edu.fudan.sqat.domain.Transaction;
-import edu.fudan.sqat.repository.*;
+import edu.fudan.sqat.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +22,11 @@ public class TransactionService {
     public List<Transaction> find(String start, String end) throws ParseException {
         if (start == null && end == null) {
             return findAll();
-        } else {
+        }
+        if (start != null && end != null) {
             return findBetween(start, end);
         }
+        return null;
     }
 
     public List<Transaction> findAll() {

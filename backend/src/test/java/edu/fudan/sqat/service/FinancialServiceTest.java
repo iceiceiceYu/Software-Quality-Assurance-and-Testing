@@ -69,6 +69,8 @@ class FinancialServiceTest {
         purchaseRepository.save(purchase);
         purchase = new Purchase("99999", "test deposit", "deposit", null, format.parse("2021-04-01"), 5000.0, 0.0);
         purchaseRepository.save(purchase);
+        purchase = new Purchase("99999", "null product", "null", null, format.parse("2021-04-02"), 0.0, 0.0);
+        purchaseRepository.save(purchase);
     }
 
     @AfterEach
@@ -97,12 +99,31 @@ class FinancialServiceTest {
     @Test
     void increase() {
         assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
+        assertEquals("success", financialService.increase());
     }
 
     @Test
     void purchaseInfo() {
         assertNotNull(financialService.purchaseInfo("99999"));
-        assertEquals(3, financialService.purchaseInfo("99999").size());
+        assertEquals(4, financialService.purchaseInfo("99999").size());
     }
 
     @Test

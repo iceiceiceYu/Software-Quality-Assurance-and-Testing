@@ -15,8 +15,6 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>1.8</java.version>
-        <sonar.version>3.6.0.1398</sonar.version>
-        <jacoco.version>0.8.6</jacoco.version>
     </properties>
     <dependencies>
         <dependency>
@@ -87,48 +85,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${jacoco.version}</version>
-                    <configuration></configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>jacoco-ut</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-it</id>
-                        <goals>
-                            <goal>prepare-agent-integration</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-site</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>${sonar.version}</version>
-            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -162,7 +119,7 @@
                                 <limit implementation="org.jacoco.report.check.Limit">
                                     <counter>METHOD</counter>
                                     <value>COVEREDRATIO</value>
-                                    <minimum>0.20</minimum>
+                                    <minimum>0.50</minimum>
                                 </limit>
                                 <!-- 指定分支覆盖到50% -->
                                 <limit implementation="org.jacoco.report.check.Limit">

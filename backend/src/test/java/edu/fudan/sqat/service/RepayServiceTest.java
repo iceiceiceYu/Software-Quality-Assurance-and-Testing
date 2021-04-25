@@ -236,6 +236,11 @@ class RepayServiceTest {
         loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
         assertFalse(loan1.getPaidOff());
 
+        //全额还款 第二期按时还清 但是总额没还完
+        repaymentRequest=new RepaymentRequest(loan1.getId(),0.0,1,format.parse("2021-03-10 01:01:01"));
+        assertEquals("Success",repayService.repayment(repaymentRequest));
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+        assertFalse(loan1.getPaidOff());
     }
 
 
@@ -284,11 +289,11 @@ class RepayServiceTest {
         accountRepository.save(account1);
         loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
 
-        Client client = new Client("12", "test01", "male", 25);
+        Client client = new Client("zz12", "test01", "male", 25);
         clientRepository.save(client);
-        account = new Account("12", 10000.0);
+        account = new Account("zz12", 10000.0);
         accountRepository.save(account);
-        account = accountRepository.findAccountByIDCode("12");
+        account = accountRepository.findAccountByIDCode("zz12");
         loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
         loanRepository.save(loan);
         loanPay = new LoanPay(loan.getId(), 1000.0, 100.0, 2, format.parse("2021-02-02 01:01:01"), format.parse("2021-05-02 01:01:01"), 0.0, 0.0);

@@ -236,6 +236,50 @@ class RepayServiceTest {
         loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
         assertFalse(loan1.getPaidOff());
 
+        //全额还款 第二期按时还清 但是总额没还完
+        repaymentRequest=new RepaymentRequest(loan1.getId(),0.0,1,format.parse("2021-03-10 01:01:01"));
+        assertEquals("Success",repayService.repayment(repaymentRequest));
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+        assertFalse(loan1.getPaidOff());
+
+        //部分还款 第三期 还了一点点
+        repaymentRequest=new RepaymentRequest(loan1.getId(),10.0,0,format.parse("2021-04-10 01:01:01"));
+        assertEquals("Success",repayService.repayment(repaymentRequest));
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+        assertFalse(loan1.getPaidOff());
+
+        //全额还款 付的钱够前一期的还款 但是因为过期 第二期的钱不够
+        client = new Client("z123", "test01", "male", 25);
+        clientRepository.save(client);
+        account = new Account("z123", 1100.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("z123");
+        loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
+        loanRepository.save(loan);
+        loanPay = new LoanPay(loan.getId(), 3000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-02-02 01:01:01"), format.parse("2021-03-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+
+        account1 = accountRepository.findAccountByIDCode("z123");
+        beforeAll=account1.getTotal();
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+        System.out.println("loan's loanpay size : " + loan1.getLoanPays().size());
+        repaymentRequest=new RepaymentRequest(loan1.getId(),1500.0,1,format.parse("2021-03-03 01:01:01"));
+        assertEquals("Error",repayService.repayment(repaymentRequest));
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+        System.out.println("loan's loanpay size : " + loan1.getLoanPays().size());
+        for(LoanPay pay:loan1.getLoanPays()) {
+            System.out.println("loanpay 应还金额:"+pay.getAmount());
+            System.out.println("----loanpay 's detail : -----");
+            System.out.println("Fine : " + pay.getFine());
+            System.out.println("AfterPaidFine : " + pay.getFineAfterPaid());
+            System.out.println("MoneyPaid : " + pay.getMoneyPaid());
+        }
+
+
     }
 
 
@@ -284,11 +328,11 @@ class RepayServiceTest {
         accountRepository.save(account1);
         loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
 
-        Client client = new Client("12", "test01", "male", 25);
+        Client client = new Client("zz12", "test01", "male", 25);
         clientRepository.save(client);
-        account = new Account("12", 10000.0);
+        account = new Account("zz12", 10000.0);
         accountRepository.save(account);
-        account = accountRepository.findAccountByIDCode("12");
+        account = accountRepository.findAccountByIDCode("zz12");
         loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
         loanRepository.save(loan);
         loanPay = new LoanPay(loan.getId(), 1000.0, 100.0, 2, format.parse("2021-02-02 01:01:01"), format.parse("2021-05-02 01:01:01"), 0.0, 0.0);

@@ -40,6 +40,9 @@ class FinancialServiceTest {
     @Autowired
     private PurchaseRepository purchaseRepository;
 
+    @Autowired
+    private TransactionRepository transactionRepository;
+
     @BeforeEach
     void beforeEach() {
         Account account = new Account("99999", 1000000.0);
@@ -66,6 +69,7 @@ class FinancialServiceTest {
 
     @AfterEach
     void afterEach() {
+        transactionRepository.deleteAll();
         Account account = accountRepository.findAccountByIDCode("99999");
         accountRepository.delete(account);
         Client client = clientRepository.findClientByIDCode("99999");

@@ -11,7 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 class FinancialServiceTest {
@@ -41,7 +42,7 @@ class FinancialServiceTest {
     private TransactionRepository transactionRepository;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws Exception {
         Account account = new Account("99999", 1000000.0);
         accountRepository.save(account);
         Client client = new Client("99999", "code test01", "male", 30);
@@ -59,13 +60,15 @@ class FinancialServiceTest {
         financialProduct = new FinancialProduct("test deposit", "deposit", 5000.0);
         financialProductRepository.save(financialProduct);
 
-//        Purchase purchase;
-//        purchase = new Purchase("99999", "test stock", "stock", 100, new Date(), 50000.0, 0.0);
-//        purchaseRepository.save(purchase);
-//        purchase = new Purchase("99999", "test fund", "fund", null, new Date(), 50000.0, 0.0);
-//        purchaseRepository.save(purchase);
-//        purchase = new Purchase("99999", "test deposit", "deposit", null, new Date(), 5000.0, 0.0);
-//        purchaseRepository.save(purchase);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+        Purchase purchase;
+        purchase = new Purchase("99999", "test stock", "stock", 100, format.parse("2021-04-01"), 50000.0, 0.0);
+        purchaseRepository.save(purchase);
+        purchase = new Purchase("99999", "test fund", "fund", null, format.parse("2021-04-01"), 50000.0, 0.0);
+        purchaseRepository.save(purchase);
+        purchase = new Purchase("99999", "test deposit", "deposit", null, format.parse("2021-04-01"), 5000.0, 0.0);
+        purchaseRepository.save(purchase);
     }
 
     @AfterEach
@@ -88,13 +91,7 @@ class FinancialServiceTest {
         financialProduct = financialProductRepository.findFinancialProductByName("test deposit");
         financialProductRepository.delete(financialProduct);
 
-//        Purchase purchase;
-//        purchase = purchaseRepository.findPurchaseByIDCodeAndName("99999", "test stock");
-//        purchaseRepository.delete(purchase);
-//        purchase = purchaseRepository.findPurchaseByIDCodeAndName("99999", "test fund");
-//        purchaseRepository.delete(purchase);
-//        purchase = purchaseRepository.findPurchaseByIDCodeAndName("99999", "test deposit");
-//        purchaseRepository.delete(purchase);
+        purchaseRepository.deleteAll();
     }
 
     @Test
@@ -105,16 +102,14 @@ class FinancialServiceTest {
     @Test
     void purchaseInfo() {
         assertNotNull(financialService.purchaseInfo("99999"));
-        assertEquals(0, financialService.purchaseInfo("99999").size());
-
+        assertEquals(3, financialService.purchaseInfo("99999").size());
     }
 
     @Test
     void accountLevel() {
-        assertEquals(3,financialService.accountLevel("22222"));
-        assertEquals(2,financialService.accountLevel("12345"));
-        assertEquals(1,financialService.accountLevel("00000"));
-
+        assertEquals(3, financialService.accountLevel("22222"));
+        assertEquals(2, financialService.accountLevel("12345"));
+        assertEquals(1, financialService.accountLevel("00000"));
     }
 
     @Test
@@ -123,12 +118,11 @@ class FinancialServiceTest {
     }
 
     @Test
-    void purchaseProduct() throws Exception{
-
-        assertEquals("success",financialService.purchaseProduct("99999","test stock","stock",100,new Date()));
-        assertEquals("cannot pay financial product",financialService.purchaseProduct("00091","test fund","fund",null,new Date()));
+    void purchaseProduct() throws Exception {
+        assertEquals("success", financialService.purchaseProduct("99999", "test stock", "stock", 100, new Date()));
+        assertEquals("cannot pay financial product", financialService.purchaseProduct("00091", "test fund", "fund", null, new Date()));
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Client client = new Client("00092", "testmember", "male", 25);
+        Client client = new Client("00092", "test member", "male", 25);
         clientRepository.save(client);
         Account account = new Account("00092", 5.0);
         accountRepository.save(account);
@@ -139,8 +133,8 @@ class FinancialServiceTest {
         loanPayRepository.save(loanPay);
         loan.getLoanPays().add(loanPay);
         loanRepository.save(loan);
-        assertEquals("cannot pay financial product",financialService.purchaseProduct("00092","test fund","fund",null,new Date()));
-        client = new Client("00093", "testmember", "male", 25);
+        assertEquals("cannot pay financial product", financialService.purchaseProduct("00092", "test fund", "fund", null, new Date()));
+        client = new Client("00093", "test member", "male", 25);
         clientRepository.save(client);
         account = new Account("00093", 2.0);
         accountRepository.save(account);
@@ -151,12 +145,36 @@ class FinancialServiceTest {
         loanPayRepository.save(loanPay);
         loan.getLoanPays().add(loanPay);
         loanRepository.save(loan);
-        assertEquals("cannot pay fine",financialService.purchaseProduct("00092","test fund","fund",null,new Date()));
-
+        assertEquals("cannot pay fine", financialService.purchaseProduct("00092", "test fund", "fund", null, new Date()));
     }
 
     @Test
-    void checkFine() {
+    void checkFine() throws Exception {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Client client = new Client("00094", "test member", "male", 25);
+        clientRepository.save(client);
+        Account account = new Account("00094", 5.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("00094");
+        Loan loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
+        loanRepository.save(loan);
+        LoanPay loanPay = new LoanPay(loan.getId(), 3000 * (1 + 0.1) / 3, 5.0, 1, format.parse("2021-02-02 01:01:01"), format.parse("2021-03-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+        assertEquals(5.0, financialService.checkFine(account.getId()));
 
+        client = new Client("00095", "test member", "male", 25);
+        clientRepository.save(client);
+        account = new Account("00095", 5.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("00095");
+        loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
+        loanRepository.save(loan);
+        loanPay = new LoanPay(loan.getId(), 3000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-02-02 01:01:01"), format.parse("2021-03-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+        assertEquals(0.0, financialService.checkFine(account.getId()));
     }
 }

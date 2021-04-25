@@ -7,13 +7,10 @@ import edu.fudan.sqat.domain.Client;
 import edu.fudan.sqat.domain.Loan;
 import edu.fudan.sqat.domain.LoanPay;
 import edu.fudan.sqat.repository.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.rules.*;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

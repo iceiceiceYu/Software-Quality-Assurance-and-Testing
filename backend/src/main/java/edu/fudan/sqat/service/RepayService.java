@@ -156,8 +156,10 @@ public class RepayService {
 
     private void realPartialPayment(Loan loan, Account account, Double money, LoanPay currentPay) {
         //本期的部分还款
-        if (money >= currentPay.getAmount() - currentPay.getMoneyPaid() + currentPay.getFineAfterPaid()) {
+        if (money > currentPay.getAmount() - currentPay.getMoneyPaid() + currentPay.getFineAfterPaid()||Math.abs(currentPay.getAmount() - currentPay.getMoneyPaid() + currentPay.getFineAfterPaid()-money)<0.00001) {
             //相当于全额还清
+            System.out.println(Math.abs(currentPay.getAmount() - currentPay.getMoneyPaid() + currentPay.getFineAfterPaid()-money)<0.00001);
+            System.out.println(money > currentPay.getAmount() - currentPay.getMoneyPaid() + currentPay.getFineAfterPaid());
             Double pay = (currentPay.getAmount() - currentPay.getMoneyPaid()) + currentPay.getFineAfterPaid();
             currentPay.setMoneyPaid(currentPay.getAmount());
             currentPay.setFineAfterPaid(0d);
@@ -172,11 +174,11 @@ public class RepayService {
             Transaction transaction = new Transaction(account,
                     -pay, account.getTotal(), "Loan Pay Outlay", new Date());
             transactionRepository.save(transaction);
-
             if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001 && loan.getStageCount() == currentPay.getStage()) {
                 loan.setPaidOff(true);
                 loanRepository.save(loan);
-            }
+            }else
+                System.out.println("本期的部分还款 没有全部还清");
 
         } else {
             //部分还款
@@ -198,12 +200,7 @@ public class RepayService {
                         -money, account.getTotal(), "Loan Pay Outlay", new Date());
                 transactionRepository.save(transaction);
 
-                if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001 && loan.getStageCount() == currentPay.getStage()) {
-                    loan.setPaidOff(true);
-                    loanRepository.save(loan);
-                }else
-                    System.out.println("--hit false--");
-
+               //这里一定不会是付完使得loan全部付清 如果全部付清的话 那么就是相当于全额还款
 
             } else {
                 //罚金都不够
@@ -234,13 +231,8 @@ public class RepayService {
             loanPays.add(newPay);
             loan.setLoanPays(loanPays);
             loanRepository.save(loan);
-        } else {
-            //说明最后一期已经还清
-            if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001) {
-                loan.setPaidOff(true);
-                loanRepository.save(loan);
-            }
         }
+        // 调用add new loan之后都会进行判断 因此这里可以不判断
     }
 
     private void fullPayInTime(Loan loan, Account account, LoanPay currentPay) {
@@ -261,6 +253,8 @@ public class RepayService {
         if (loan.getLoanPays().get(loan.getLoanPays().size() - 1).getAmount() - loan.getLoanPays().get(loan.getLoanPays().size() - 1).getMoneyPaid() + loan.getLoanPays().get(loan.getLoanPays().size() - 1).getFineAfterPaid() < 0.00001 && loan.getStageCount() == currentPay.getStage()) {
             loan.setPaidOff(true);
             loanRepository.save(loan);
+        }else{
+            System.out.println("-----full time in pay false----");
         }
     }
 
@@ -288,7 +282,8 @@ public class RepayService {
                     //只需要算一个贷款中最近的loanPay即可
                     targetList.add(loanPay);
                 }
-            }
+            } else
+                System.out.println("不满足超时且未还清");
         }
         //全是不同的贷款账户中的最近一个LoanPay
         for(LoanPay loanPay:targetList){
@@ -298,11 +293,12 @@ public class RepayService {
 
             currentPay = findCurrentLoanPay(loan, currentPay, currentTime);
             //此时的currentPay为当前时间处于的那一期
+            System.out.println(currentPay.getFine());
             if(currentPay.getFine()>0){
                 //判断账户欠款中是否包含罚金
                 //判断账户余额是否大于罚金余额
                 if(account.getTotal()>currentPay.getFine()){
-
+                    System.out.println("账户余额大于罚金余额");
                     //从账户中扣除罚金
                     account.setTotal(account.getTotal()-currentPay.getFine());
                     accountRepository.save(account);
@@ -312,11 +308,10 @@ public class RepayService {
                             -currentPay.getFine(), account.getTotal(), "Loan Pay Outlay", new Date());
                     transactionRepository.save(transaction);
 
+                }else{
+                    System.out.println("账户余额小于罚金余额");
                 }
                 if(account.getTotal()>currentPay.getAmount()){
-                    System.out.println(loan.toString());
-                    System.out.println(currentPay.toString());
-                    System.out.println("......");
                     //判断账户余额是否大于欠款金额
                     account.setTotal(account.getTotal()-currentPay.getAmount());
                     accountRepository.save(account);
@@ -327,8 +322,7 @@ public class RepayService {
 
                     //新建这个贷款的期
                     if (loan.getStageCount() > currentPay.getStage()) {
-
-
+                        System.out.println("new new new!!!!!");
                         LoanPay newPay = new LoanPay(loan.getId(),(loan.getAmount()*(1+loan.getInterest()))/loan.getStageCount(), 0d, loan.getLoanPays().size() + 1,
                                 currentPay.getEnd(), addDate(currentPay.getEnd(), 30), 0d,0d);
                         loanPayRepository.save(newPay);
@@ -341,6 +335,24 @@ public class RepayService {
                         loan.setPaidOff(true);
                         loanRepository.save(loan);
                     }
+
+                }
+            }else {
+                System.out.println("无罚金");
+                if(account.getTotal()>currentPay.getAmount()){
+                    //判断账户余额是否大于欠款金额
+                    account.setTotal(account.getTotal()-currentPay.getAmount());
+                    accountRepository.save(account);
+                    currentPay.setMoneyPaid(currentPay.getAmount());
+                    loanPayRepository.save(currentPay); Transaction transaction = new Transaction(account,
+                            -currentPay.getAmount(), account.getTotal(), "Loan Pay Outlay", new Date());
+                    transactionRepository.save(transaction);
+
+                    //已过期无罚金 说明已经到了最后一个loanpay 不用新建这个贷款的期
+                    //说明最后一期已经还清
+                    loan.setPaidOff(true);
+                    loanRepository.save(loan);
+
 
                 }
             }

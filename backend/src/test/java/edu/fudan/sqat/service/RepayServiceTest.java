@@ -263,11 +263,53 @@ class RepayServiceTest {
         loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
 
         loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
-        System.out.println("loan's loanpay size : " + loan1.getLoanPays().size());
         repaymentRequest=new RepaymentRequest(loan1.getId(),1500.0,1,format.parse("2021-03-03 01:01:01"));
         assertEquals("Error",repayService.repayment(repaymentRequest));
+
+        //全额还款
+        client = new Client("zhangsan", "test01", "male", 25);
+        clientRepository.save(client);
+        account = new Account("zhangsan", 10000.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("zhangsan");
+        loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
+        loanRepository.save(loan);
+        loanPay = new LoanPay(loan.getId(), 3000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-02-02 01:01:01"), format.parse("2021-03-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+
+        account1 = accountRepository.findAccountByIDCode("zhangsan");
+        beforeAll=account1.getTotal();
         loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
-        System.out.println("loan's loanpay size : " + loan1.getLoanPays().size());
+
+        repaymentRequest=new RepaymentRequest(loan1.getId(),1100.0,1,format.parse("2021-02-03 01:01:01"));
+        assertEquals("Success",repayService.repayment(repaymentRequest));
+
+        //第二期 相当于部分还款 但是没有全部还清
+        System.out.println("第二期 相当于部分还款 但是没有全部还清");
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+        System.out.println(loan1.getLoanPays().size());
+        repaymentRequest=new RepaymentRequest(loan1.getId(),100.0,0,format.parse("2021-03-03 01:01:01"));
+        assertEquals("Success",repayService.repayment(repaymentRequest));
+        //第3期 相当于部分还款 但是全部还清
+        System.out.println("第2期 相当于部分还款 但是全部还清");
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+        System.out.println(loan1.getLoanPays().size());
+        repaymentRequest=new RepaymentRequest(loan1.getId(),1000.0,0,format.parse("2021-03-03 01:01:01"));
+        assertEquals("Success",repayService.repayment(repaymentRequest));
+
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+        System.out.println(loan1.getLoanPays().size());
+        repaymentRequest=new RepaymentRequest(loan1.getId(),100.0,0,format.parse("2021-04-03 01:01:01"));
+        assertEquals("Success",repayService.repayment(repaymentRequest));
+
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+        System.out.println(loan1.getLoanPays().size());
+        repaymentRequest=new RepaymentRequest(loan1.getId(),1000.0,0,format.parse("2021-04-04 01:01:01"));
+        assertEquals("Success",repayService.repayment(repaymentRequest));
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+        /*
         for(LoanPay pay:loan1.getLoanPays()) {
             System.out.println("loanpay 应还金额:"+pay.getAmount());
             System.out.println("----loanpay 's detail : -----");
@@ -275,6 +317,29 @@ class RepayServiceTest {
             System.out.println("AfterPaidFine : " + pay.getFineAfterPaid());
             System.out.println("MoneyPaid : " + pay.getMoneyPaid());
         }
+         */
+
+        //full time in pay false
+
+        client = new Client("zhangssan", "test01", "male", 25);
+        clientRepository.save(client);
+        account = new Account("zhangssan", 10000.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("zhangssan");
+        loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
+        loanRepository.save(loan);
+        loanPay = new LoanPay(loan.getId(), 3000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-02-02 01:01:01"), format.parse("2021-03-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+
+        account1 = accountRepository.findAccountByIDCode("zhangssan");
+        beforeAll=account1.getTotal();
+        loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
+
+        repaymentRequest=new RepaymentRequest(loan1.getId(),1100.0,1,format.parse("2021-02-03 01:01:01"));
+        assertEquals("Success",repayService.repayment(repaymentRequest));
+
 
 
     }
@@ -291,10 +356,8 @@ class RepayServiceTest {
     void autoRepayment() throws Exception{
 
         // targetList为空
-        // 账户欠款中包含罚金但钱不够
-        // 账户欠款中不包含罚金但还款钱不够
-        // 账户欠款中不包含罚金，还款钱够
-
+        System.out.println("---------" +
+                "auto-----------");
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Account account = accountRepository.findAccountByIDCode("23456");
@@ -325,6 +388,7 @@ class RepayServiceTest {
         accountRepository.save(account1);
         loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
 
+        // 账户欠款中不包含罚金，还款钱够
         Client client = new Client("zz12", "test01", "male", 25);
         clientRepository.save(client);
         account = new Account("zz12", 10000.0);
@@ -332,13 +396,107 @@ class RepayServiceTest {
         account = accountRepository.findAccountByIDCode("zz12");
         loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
         loanRepository.save(loan);
-        loanPay = new LoanPay(loan.getId(), 1000.0, 100.0, 2, format.parse("2021-02-02 01:01:01"), format.parse("2021-05-02 01:01:01"), 0.0, 0.0);
+        loanPay = new LoanPay(loan.getId(), 3000.0*(1+0.1)/3, 0.0, 1, format.parse("2021-04-02 01:01:01"), format.parse("2021-05-02 01:01:01"), 0.0, 0.0);
         loanPayRepository.save(loanPay);
         loan.getLoanPays().add(loanPay);
         loanRepository.save(loan);
 
         repayService.autoRepayment();
 
+
+        // 账户欠款中包含罚金但钱够
+        System.out.println("账户欠款中包含罚金但钱够");
+        client = new Client("zz112", "test01", "male", 25);
+        clientRepository.save(client);
+        account = new Account("zz112", 10000.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("zz112");
+        loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
+        loanRepository.save(loan);
+        loanPay = new LoanPay(loan.getId(), 3000.0*(1+0.1)/3, 0.0, 1, format.parse("2021-03-02 01:01:01"), format.parse("2021-04-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+
+        repayService.autoRepayment();
+
+
+        // 账户欠款中包含罚金但钱不够
+        System.out.println("账户欠款中包含罚金但钱不够");
+        client = new Client("zz1122", "test01", "male", 25);
+        clientRepository.save(client);
+        account = new Account("zz1122", 10.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("zz1122");
+        loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
+        loanRepository.save(loan);
+        loanPay = new LoanPay(loan.getId(), 3000.0*(1+0.1)/3, 0.0, 1, format.parse("2021-03-02 01:01:01"), format.parse("2021-04-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+
+        repayService.autoRepayment();
+
+        // 账户欠款中不包含罚金但还款钱不够
+        client = new Client("zz1112", "test01", "male", 25);
+        clientRepository.save(client);
+        account = new Account("zz1112", 10.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("zz1112");
+        loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
+        loanRepository.save(loan);
+        loanPay = new LoanPay(loan.getId(), 3000.0*(1+0.1)/3, 0.0, 1, format.parse("2021-03-02 01:01:01"), format.parse("2021-04-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+
+        repayService.autoRepayment();
+
+        //no罚金 全还清
+        client = new Client("wahaha", "test01", "male", 25);
+        clientRepository.save(client);
+        account = new Account("wahaha", 10000.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("wahaha");
+        loan = new Loan(account.getId(), 3000.0, 1, 0.1, false);
+        loanRepository.save(loan);
+        loanPay = new LoanPay(loan.getId(), 3000.0*(1+0.1)/1, 0.0, 1, format.parse("2021-02-02 01:01:01"), format.parse("2021-03-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+
+        repayService.autoRepayment();
+
+        //no罚金 还不了
+        client = new Client("waha", "test01", "male", 25);
+        clientRepository.save(client);
+        account = new Account("waha", 1000.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("waha");
+        loan = new Loan(account.getId(), 3000.0, 1, 0.1, false);
+        loanRepository.save(loan);
+        loanPay = new LoanPay(loan.getId(), 3000.0*(1+0.1)/1, 0.0, 1, format.parse("2021-02-02 01:01:01"), format.parse("2021-03-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+
+        repayService.autoRepayment();
+
+        //未到期
+        System.out.println("未到期");
+        client = new Client("wahaa", "test01", "male", 25);
+        clientRepository.save(client);
+        account = new Account("wahaa", 1000.0);
+        accountRepository.save(account);
+        account = accountRepository.findAccountByIDCode("wahaa");
+        loan = new Loan(account.getId(), 3000.0, 1, 0.1, false);
+        loanRepository.save(loan);
+        loanPay = new LoanPay(loan.getId(), 3000.0*(1+0.1)/1, 0.0, 1, format.parse("2021-04-02 01:01:01"), format.parse("2021-05-02 01:01:01"), 0.0, 0.0);
+        loanPayRepository.save(loanPay);
+        loan.getLoanPays().add(loanPay);
+        loanRepository.save(loan);
+
+        repayService.autoRepayment();
 
     }
 

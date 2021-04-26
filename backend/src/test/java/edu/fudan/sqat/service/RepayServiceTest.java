@@ -126,7 +126,8 @@ class RepayServiceTest {
         loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
         assertTrue(loan1.getPaidOff());
 
-        //loan存在 第一期部分还款大于全额
+
+        //还款金额大于账户金额
         client = new Client("1234", "test01", "male", 25);
         clientRepository.save(client);
         account = new Account("1234", 10.0);
@@ -152,6 +153,7 @@ class RepayServiceTest {
         }
         assertEquals(beforeAll,accountRepository.findAccountByIDCode("1234").getTotal());
 
+        //loan存在 第一期部分还款大于全额
         account1.setTotal(10000.0);
         accountRepository.save(account1);
         assertEquals("Error",repayService.repayment(repaymentRequest));
@@ -292,13 +294,13 @@ class RepayServiceTest {
         System.out.println(loan1.getLoanPays().size());
         repaymentRequest=new RepaymentRequest(loan1.getId(),100.0,0,format.parse("2021-03-03 01:01:01"));
         assertEquals("Success",repayService.repayment(repaymentRequest));
-        //第3期 相当于部分还款 但是全部还清
+
         System.out.println("第2期 相当于部分还款 但是全部还清");
         loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
         System.out.println(loan1.getLoanPays().size());
         repaymentRequest=new RepaymentRequest(loan1.getId(),1000.0,0,format.parse("2021-03-03 01:01:01"));
         assertEquals("Success",repayService.repayment(repaymentRequest));
-
+        //第3期 相当于部分还款 但是全部还清
         loan1 = loanRepository.findLoanByAccountId(account1.getId()).iterator().next();
         System.out.println(loan1.getLoanPays().size());
         repaymentRequest=new RepaymentRequest(loan1.getId(),100.0,0,format.parse("2021-04-03 01:01:01"));
@@ -320,7 +322,6 @@ class RepayServiceTest {
          */
 
         //full time in pay false
-
         client = new Client("zhangssan", "test01", "male", 25);
         clientRepository.save(client);
         account = new Account("zhangssan", 10000.0);
@@ -359,6 +360,7 @@ class RepayServiceTest {
         System.out.println("---------" +
                 "auto-----------");
 
+        //账户欠款包含罚金，但是还款钱够罚金和贷款
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Account account = accountRepository.findAccountByIDCode("23456");
         Loan loan=new Loan(account.getId(),10000.0,2,0.1,false);

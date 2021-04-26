@@ -251,7 +251,7 @@ public class SqatApplication {
                 accountRepository.save(account);
                 account = new Account("11111", 500000.0);
                 accountRepository.save(account);
-                account = new Account("22222", 5000.0);
+                account = new Account("22222", 4000.0);
                 accountRepository.save(account);
                 account = new Account("00000", 1000000.0);
                 accountRepository.save(account);

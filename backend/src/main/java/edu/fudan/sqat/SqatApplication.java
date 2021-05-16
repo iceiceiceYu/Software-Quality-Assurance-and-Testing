@@ -298,7 +298,7 @@ public class SqatApplication {
                 account = accountRepository.findAccountByIDCode("12345");
                 loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
                 loanRepository.save(loan);
-                loanPay = new LoanPay(loan.getId(), 3000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-02-02 01:01:01"), format.parse("2021-03-02 01:01:01"), 0.0, 0.0);
+                loanPay = new LoanPay(loan.getId(), 3000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-05-02 01:01:01"), format.parse("2021-06-02 01:01:01"), 0.0, 0.0);
                 loanPayRepository.save(loanPay);
                 loan.getLoanPays().add(loanPay);
                 loanRepository.save(loan);
@@ -310,6 +310,23 @@ public class SqatApplication {
                 loanPayRepository.save(loanPay);
                 loan.getLoanPays().add(loanPay);
                 loanRepository.save(loan);
+
+                account = accountRepository.findAccountByIDCode("23456");
+                loan = new Loan(account.getId(), 3000.0, 3, 0.1, false);
+                loanRepository.save(loan);
+                loanPay = new LoanPay(loan.getId(), 3000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-05-02 01:01:01"), format.parse("2021-06-02 01:01:01"), 0.0, 0.0);
+                loanPayRepository.save(loanPay);
+                loan.getLoanPays().add(loanPay);
+                loanRepository.save(loan);
+
+                account = accountRepository.findAccountByIDCode("34567");
+                loan = new Loan(account.getId(), 5000.0, 3, 0.1, false);
+                loanRepository.save(loan);
+                loanPay = new LoanPay(loan.getId(), 5000 * (1 + 0.1) / 3, 0.0, 1, format.parse("2021-02-03 01:01:01"), format.parse("2021-03-03 01:01:01"), 0.0, 0.0);
+                loanPayRepository.save(loanPay);
+                loan.getLoanPays().add(loanPay);
+                loanRepository.save(loan);
+
             }
 
             private void PurchaseLoader(PurchaseRepository purchaseRepository) {

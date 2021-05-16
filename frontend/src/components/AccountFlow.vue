@@ -74,7 +74,11 @@
             <el-table-column
                     prop="source"
                     label="source"
-                    :filters="[{text: 'Financial Management Income', value: 'Financial Management Income'}, {text: 'Financial Management Outlay', value: 'Financial Management Outlay'}]"
+                    :filters="[{text: 'Financial Management Income', value: 'Financial Management Income'},
+                    {text: 'Financial Management Outlay', value: 'Financial Management Outlay'},
+                    {text: 'Loan Pay Outlay', value: 'Loan Pay Outlay'},
+                    {text: 'Transfer Outlay', value: 'Transfer Outlay'},
+                    {text: 'Transfer Income', value: 'Transfer Income'}]"
                     :filter-method="filterTag"
             >
 
@@ -106,6 +110,7 @@
     },
     methods: {
       searchWithDate() {
+        this.Flow = []
         console.log(this.dates[0])
         console.log(this.dates[1])
         this.$axios.post('/transaction/find', {
@@ -120,7 +125,7 @@
 
                       this.Flow.push({
                         id: flow.id,
-                        account: flow.account.id,
+                        account: flow.account.idcode,
                         balance: flow.balance,
                         currentTotal: flow.currentTotal,
                         source : flow.source,
@@ -148,7 +153,7 @@
 
                 this.Flow.push({
                   id: flow.id,
-                  account: flow.account.id,
+                  account: flow.account.idcode,
                   balance: flow.balance,
                   currentTotal: flow.currentTotal,
                   source : flow.source,
